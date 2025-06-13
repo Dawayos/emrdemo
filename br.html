@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Farm Center Injection Substation | 33KV CBN Feeder</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #1a3c6c;
+            --secondary: #2c5282;
+            --accent: #4a90e2;
+            --danger: #e53e3e;
+            --success: #38a169;
+            --warning: #dd6b20;
+            --info: #3182ce;
+            --dark: #1a202c;
+            --light: #f7fafc;
+            --gray: #e2e8f0;
+            --dark-gray: #718096;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: var(--light);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            max-width: 1400px;
+            width: 100%;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px 0;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        header h1 {
+            font-size: 2.8rem;
+            margin-bottom: 5px;
+            background: linear-gradient(to right, #4facfe, #00f2fe);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header .substation-info {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .info-badge {
+            background: rgba(26, 60, 108, 0.7);
+            border-radius: 10px;
+            padding: 12px 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .info-badge i {
+            color: var(--accent);
+            font-size: 1.4rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            margin-bottom: 30px;
+            width: 100%;
+        }
+
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .section-title i {
+            font-size: 1.8rem;
+            margin-right: 15px;
+            color: var(--accent);
+        }
+
+        .section-title h2 {
+            font-size: 1.8rem;
+            color: var(--light);
+        }
+
+        .real-time-readings {
+            background: rgba(26, 60, 108, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .breakers-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+        }
+
+        @media (max-width: 992px) {
+            .breakers-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .breakers-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .breaker-panel {
+            background: rgba(44, 82, 130, 0.6);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .breaker-panel:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .breaker-header {
+            text-align: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .breaker-header h3 {
+            font-size: 1.8rem;
+            color: var(--light);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .breaker-header h3 i {
+            color: var(--accent);
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .status-card {
+            background: rgba(26, 60, 108, 0.7);
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .status-card.active {
+            box-shadow: 0 0 20px rgba(56, 161, 105, 0.5);
+            background: rgba(56, 161, 105, 0.2);
+        }
+
+        .status-card i {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .status-card h4 {
+            font-size: 1rem;
+            margin-bottom: 5px;
+            color: var(--gray);
+        }
+
+        .status-value {
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-label i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .breaker-control {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            position: relative;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 100px;
+            height: 50px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--danger);
+            transition: .4s;
+            border-radius: 50px;
+            box-shadow: 0 0 15px rgba(229, 62, 62, 0.5);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 40px;
+            width: 40px;
+            left: 5px;
+            bottom: 5px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--success);
+            box-shadow: 0 0 15px rgba(56, 161, 105, 0.5);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(50px);
+        }
+
+        .slider-text {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .on-text {
+            right: 15px;
+            color: white;
+            display: none;
+        }
+
+        input:checked + .slider .on-text {
+            display: block;
+        }
+
+        .off-text {
+            left: 15px;
+            color: white;
+        }
+
+        input:checked + .slider .off-text {
+            display: none;
+        }
+
+        .button-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .control-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            background: var(--secondary);
+            color: white;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        .control-btn:active {
+            transform: translateY(1px);
+        }
+
+        .control-btn.rack-in {
+            background: linear-gradient(to right, var(--info), var(--accent));
+        }
+
+        .control-btn.rack-out {
+            background: linear-gradient(to right, var(--warning), #f6ad55);
+        }
+
+        .breaker-schematic {
+            background: rgba(26, 32, 44, 0.8);
+            border-radius: 15px;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+            height: 220px;
+            overflow: hidden;
+        }
+
+        .schematic-title {
+            text-align: center;
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        .schematic-container {
+            position: relative;
+            height: 150px;
+            width: 100%;
+        }
+
+        .busbar {
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            width: 80%;
+            height: 6px;
+            background: linear-gradient(to right, #f6e05e, #f6ad55);
+            border-radius: 3px;
+            box-shadow: 0 0 8px rgba(246, 173, 85, 0.7);
+        }
+
+        .breaker-body {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60px;
+            height: 120px;
+            background: linear-gradient(to bottom, #4a5568, #2d3748);
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            z-index: 10;
+        }
+
+        .breaker-top, .breaker-bottom {
+            width: 40px;
+            height: 15px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            position: relative;
+        }
+
+        .breaker-handle {
+            width: 20px;
+            height: 70px;
+            background: #cbd5e0;
+            border-radius: 4px;
+            position: relative;
+            transition: transform 0.5s ease;
+        }
+
+        .breaker-handle.on {
+            transform: rotate(30deg);
+            background: var(--success);
+        }
+
+        .breaker-handle.off {
+            transform: rotate(-30deg);
+            background: var(--danger);
+        }
+
+        .connector {
+            position: absolute;
+            background: #a0aec0;
+            width: 6px;
+            z-index: 5;
+        }
+
+        .connector-top {
+            top: 10%;
+            height: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .connector-bottom {
+            top: 60%;
+            height: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .load-line {
+            position: absolute;
+            width: 6px;
+            background: #a0aec0;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            height: 50px;
+        }
+
+        .load-label {
+            position: absolute;
+            bottom: 5px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.8rem;
+            color: var(--gray);
+        }
+
+        .status-log {
+            background: rgba(26, 60, 108, 0.7);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .log-list {
+            list-style: none;
+        }
+
+        .log-item {
+            padding: 10px 15px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-item i {
+            min-width: 20px;
+        }
+
+        .log-item .breaker-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .log-item .breaker-tag.tarauni {
+            background: rgba(79, 172, 254, 0.2);
+            color: #4facfe;
+        }
+
+        .log-item .breaker-tag.lanbisa {
+            background: rgba(56, 161, 105, 0.2);
+            color: #38a169;
+        }
+
+        .log-item .breaker-tag.bala {
+            background: rgba(221, 107, 32, 0.2);
+            color: #dd6b20;
+        }
+
+        .log-item.info i {
+            color: var(--accent);
+        }
+
+        .log-item.success i {
+            color: var(--success);
+        }
+
+        .log-item.warning i {
+            color: var(--warning);
+        }
+
+        .log-item.danger i {
+            color: var(--danger);
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 30px;
+            color: var(--gray);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification.success {
+            background: var(--success);
+        }
+
+        .notification.warning {
+            background: var(--warning);
+        }
+
+        .notification.danger {
+            background: var(--danger);
+        }
+
+        .timestamp {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-left: auto;
+            padding-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Farm Center Injection Substation</h1>
+            <p>33kV Circuit Breaker Control Panel</p>
+            <div class="substation-info">
+                <div class="info-badge">
+                    <i class="fas fa-bolt"></i>
+                    <span>Feeder: 33KV CBN</span>
+                </div>
+                <div class="info-badge">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <span>Location: Kaduna, Nigeria</span>
+                </div>
+                <div class="info-badge">
+                    <i class="fas fa-sync-alt"></i>
+                    <span>Last Update: <span id="lastUpdateTime">Just now</span></span>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="real-time-readings">
+                <div class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    <h2>Real-time Breaker Status</h2>
+                </div>
+                <div class="breakers-grid" id="breakersGrid">
+                    <!-- Breaker panels will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="real-time-readings">
+                <div class="section-title">
+                    <i class="fas fa-sliders-h"></i>
+                    <h2>Breaker Control Panels</h2>
+                </div>
+                <div class="breakers-grid" id="controlPanels">
+                    <!-- Control panels will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="status-log">
+                <div class="log-header">
+                    <h2><i class="fas fa-clipboard-list"></i> Operation Log</h2>
+                    <button class="control-btn" id="clearLogBtn">
+                        <i class="fas fa-trash-alt"></i> Clear Log
+                    </button>
+                </div>
+                <ul class="log-list" id="logList">
+                    <li class="log-item info">
+                        <i class="fas fa-info-circle"></i>
+                        <span class="breaker-tag tarauni">Tarauni</span>
+                        <span>System initialized at 08:45:23</span>
+                        <span class="timestamp">08:45:23</span>
+                    </li>
+                    <li class="log-item success">
+                        <i class="fas fa-check-circle"></i>
+                        <span class="breaker-tag tarauni">Tarauni</span>
+                        <span>Breaker successfully racked in</span>
+                        <span class="timestamp">08:45:30</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <footer>
+            <p>33kV Circuit Breaker Remote Control Simulation | Substation Monitoring System v3.1</p>
+            <p>This is a simulation for demonstration purposes only</p>
+        </footer>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-info-circle"></i>
+        <span>Operation completed successfully</span>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configuration
+            const breakers = [
+                { id: 'tarauni', name: '11KV Tarauni', voltage: 11.23, current: 245.7, status: 'OFF', racked: 'IN' },
+                { id: 'lanbisa', name: '11KV Lanbisa', voltage: 11.35, current: 312.4, status: 'ON', racked: 'IN' },
+                { id: 'bala', name: '11KV Dr. Bala', voltage: 11.18, current: 198.6, status: 'OFF', racked: 'OUT' }
+            ];
+            
+            // DOM Elements
+            const breakersGrid = document.getElementById('breakersGrid');
+            const controlPanels = document.getElementById('controlPanels');
+            const logList = document.getElementById('logList');
+            const clearLogBtn = document.getElementById('clearLogBtn');
+            const notification = document.getElementById('notification');
+            const lastUpdateTime = document.getElementById('lastUpdateTime');
+            
+            // Generate breaker status panels
+            function generateBreakerPanels() {
+                breakersGrid.innerHTML = '';
+                controlPanels.innerHTML = '';
+                
+                breakers.forEach((breaker, index) => {
+                    // Status panel
+                    const statusPanel = document.createElement('div');
+                    statusPanel.className = 'breaker-panel';
+                    statusPanel.innerHTML = `
+                        <div class="breaker-header">
+                            <h3><i class="fas fa-bolt"></i>${breaker.name}</h3>
+                        </div>
+                        <div class="status-grid">
+                            <div class="status-card">
+                                <i class="fas fa-power-off"></i>
+                                <h4>Breaker Status</h4>
+                                <div class="status-value breaker-status-${breaker.id}">${breaker.status}</div>
+                            </div>
+                            <div class="status-card">
+                                <i class="fas fa-plug"></i>
+                                <h4>Racking Status</h4>
+                                <div class="status-value racking-status-${breaker.id}">${breaker.racked}</div>
+                            </div>
+                            <div class="status-card">
+                                <i class="fas fa-bolt"></i>
+                                <h4>Voltage</h4>
+                                <div class="status-value voltage-${breaker.id}">${breaker.voltage.toFixed(2)} kV</div>
+                            </div>
+                            <div class="status-card">
+                                <i class="fas fa-tachometer-alt"></i>
+                                <h4>Load Current</h4>
+                                <div class="status-value current-${breaker.id}">${breaker.current.toFixed(1)} A</div>
+                            </div>
+                        </div>
+                    `;
+                    breakersGrid.appendChild(statusPanel);
+                    
+                    // Control panel with schematic
+                    const controlPanel = document.createElement('div');
+                    controlPanel.className = 'breaker-panel';
+                    controlPanel.innerHTML = `
+                        <div class="breaker-header">
+                            <h3><i class="fas fa-cogs"></i>${breaker.name}</h3>
+                        </div>
+                        <div class="control-group">
+                            <div class="control-label">
+                                <i class="fas fa-power-off"></i>
+                                <span>Breaker Status Control</span>
+                            </div>
+                            <div class="breaker-control">
+                                <label class="switch">
+                                    <input type="checkbox" id="toggle-${breaker.id}" ${breaker.status === 'ON' ? 'checked' : ''}>
+                                    <span class="slider">
+                                        <span class="off-text">OFF</span>
+                                        <span class="on-text">ON</span>
+                                    </span>
+                                </label>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <div class="control-label">
+                                <i class="fas fa-cogs"></i>
+                                <span>Breaker Racking Mechanism</span>
+                            </div>
+                            <div class="button-group">
+                                <button class="control-btn rack-in" id="rack-in-${breaker.id}">
+                                    <i class="fas fa-arrow-right"></i> Rack In
+                                </button>
+                                <button class="control-btn rack-out" id="rack-out-${breaker.id}">
+                                    <i class="fas fa-arrow-left"></i> Rack Out
+                                </button>
+                            </div>
+                        </div>
+                        <div class="breaker-schematic">
+                            <div class="schematic-title">Breaker Schematic</div>
+                            <div class="schematic-container">
+                                <div class="busbar"></div>
+                                <div class="breaker-body">
+                                    <div class="breaker-top"></div>
+                                    <div class="breaker-handle ${breaker.status === 'ON' ? 'on' : 'off'}" id="handle-${breaker.id}"></div>
+                                    <div class="breaker-bottom"></div>
+                                </div>
+                                <div class="connector connector-top"></div>
+                                <div class="connector connector-bottom"></div>
+                                <div class="load-line"></div>
+                                <div class="load-label">LOAD</div>
+                            </div>
+                        </div>
+                    `;
+                    controlPanels.appendChild(controlPanel);
+                });
+                
+                // Add event listeners
+                breakers.forEach(breaker => {
+                    // Toggle switch
+                    const toggle = document.getElementById(`toggle-${breaker.id}`);
+                    toggle.addEventListener('change', function() {
+                        handleBreakerToggle(breaker.id, this.checked);
+                    });
+                    
+                    // Rack in button
+                    const rackInBtn = document.getElementById(`rack-in-${breaker.id}`);
+                    rackInBtn.addEventListener('click', function() {
+                        handleRackIn(breaker.id);
+                    });
+                    
+                    // Rack out button
+                    const rackOutBtn = document.getElementById(`rack-out-${breaker.id}`);
+                    rackOutBtn.addEventListener('click', function() {
+                        handleRackOut(breaker.id);
+                    });
+                });
+            }
+            
+            // Handle breaker toggle
+            function handleBreakerToggle(breakerId, isChecked) {
+                const breaker = breakers.find(b => b.id === breakerId);
+                
+                // Can't toggle if racked out
+                if (breaker.racked === 'OUT') {
+                    showNotification(`Cannot toggle breaker when racked out (${breaker.name})`, "danger");
+                    document.getElementById(`toggle-${breakerId}`).checked = false;
+                    return;
+                }
+                
+                breaker.status = isChecked ? 'ON' : 'OFF';
+                updateBreakerStatus(breakerId);
+                
+                // Update schematic handle
+                const handle = document.getElementById(`handle-${breakerId}`);
+                handle.classList.remove('on', 'off');
+                handle.classList.add(breaker.status === 'ON' ? 'on' : 'off');
+                
+                // Simulate network delay
+                setTimeout(() => {
+                    if (isChecked) {
+                        addLogEntry(breakerId, "Breaker closed", "success");
+                        showNotification(`Breaker closed successfully (${breaker.name})`, "success");
+                    } else {
+                        addLogEntry(breakerId, "Breaker opened", "warning");
+                        showNotification(`Breaker opened successfully (${breaker.name})`, "warning");
+                    }
+                }, 800);
+            }
+            
+            // Handle rack in
+            function handleRackIn(breakerId) {
+                const breaker = breakers.find(b => b.id === breakerId);
+                if (breaker.racked === 'IN') return;
+                
+                const rackInBtn = document.getElementById(`rack-in-${breakerId}`);
+                
+                // Simulate racking in process
+                rackInBtn.disabled = true;
+                rackInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Racking In...';
+                
+                setTimeout(() => {
+                    breaker.racked = 'IN';
+                    updateRackingStatus(breakerId);
+                    rackInBtn.disabled = false;
+                    rackInBtn.innerHTML = '<i class="fas fa-arrow-right"></i> Rack In';
+                    addLogEntry(breakerId, "Breaker racked in", "success");
+                    showNotification(`Breaker racked in successfully (${breaker.name})`, "success");
+                }, 1500);
+            }
+            
+            // Handle rack out
+            function handleRackOut(breakerId) {
+                const breaker = breakers.find(b => b.id === breakerId);
+                if (breaker.racked === 'OUT') return;
+                
+                const rackOutBtn = document.getElementById(`rack-out-${breakerId}`);
+                
+                // Turn off breaker if it's on
+                if (breaker.status === 'ON') {
+                    breaker.status = 'OFF';
+                    document.getElementById(`toggle-${breakerId}`).checked = false;
+                    updateBreakerStatus(breakerId);
+                    
+                    // Update schematic handle
+                    const handle = document.getElementById(`handle-${breakerId}`);
+                    handle.classList.remove('on');
+                    handle.classList.add('off');
+                    
+                    addLogEntry(breakerId, "Breaker automatically opened before racking out", "warning");
+                }
+                
+                // Simulate racking out process
+                rackOutBtn.disabled = true;
+                rackOutBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Racking Out...';
+                
+                setTimeout(() => {
+                    breaker.racked = 'OUT';
+                    updateRackingStatus(breakerId);
+                    rackOutBtn.disabled = false;
+                    rackOutBtn.innerHTML = '<i class="fas fa-arrow-left"></i> Rack Out';
+                    addLogEntry(breakerId, "Breaker racked out", "info");
+                    showNotification(`Breaker racked out successfully (${breaker.name})`, "info");
+                }, 1500);
+            }
+            
+            // Update breaker status display
+            function updateBreakerStatus(breakerId) {
+                const breaker = breakers.find(b => b.id === breakerId);
+                document.querySelector(`.breaker-status-${breakerId}`).textContent = breaker.status;
+            }
+            
+            // Update racking status display
+            function updateRackingStatus(breakerId) {
+                const breaker = breakers.find(b => b.id === breakerId);
+                document.querySelector(`.racking-status-${breakerId}`).textContent = breaker.racked;
+            }
+            
+            // Update real-time readings
+            function updateReadings() {
+                const now = new Date();
+                lastUpdateTime.textContent = now.toLocaleTimeString();
+                
+                breakers.forEach(breaker => {
+                    // Simulate changing values
+                    const voltageChange = (Math.random() - 0.5) * 0.2;
+                    const currentChange = (Math.random() - 0.5) * 20;
+                    
+                    breaker.voltage = Math.max(10.5, Math.min(11.9, breaker.voltage + voltageChange));
+                    breaker.current = Math.max(150, Math.min(350, breaker.current + currentChange));
+                    
+                    // Update DOM
+                    document.querySelector(`.voltage-${breaker.id}`).textContent = breaker.voltage.toFixed(2) + ' kV';
+                    document.querySelector(`.current-${breaker.id}`).textContent = breaker.current.toFixed(1) + ' A';
+                });
+            }
+            
+            // Add entry to log
+            function addLogEntry(breakerId, message, type) {
+                const logItem = document.createElement('li');
+                logItem.classList.add('log-item', type);
+                
+                let iconClass = "fas fa-info-circle";
+                if (type === "success") iconClass = "fas fa-check-circle";
+                if (type === "warning") iconClass = "fas fa-exclamation-triangle";
+                if (type === "danger") iconClass = "fas fa-exclamation-circle";
+                
+                const breaker = breakers.find(b => b.id === breakerId);
+                const breakerName = breaker.name.replace('11KV ', '');
+                
+                const now = new Date();
+                const timestamp = now.toLocaleTimeString();
+                
+                logItem.innerHTML = `
+                    <i class="${iconClass}"></i>
+                    <span class="breaker-tag ${breakerId}">${breakerName}</span>
+                    <span>${message}</span>
+                    <span class="timestamp">${timestamp}</span>
+                `;
+                
+                logList.prepend(logItem);
+                
+                // Auto-scroll to new log entry
+                logList.scrollTop = 0;
+            }
+            
+            // Show notification
+            function showNotification(message, type) {
+                notification.innerHTML = `
+                    <i class="fas ${type === 'success' ? 'fa-check-circle' : 
+                                     type === 'warning' ? 'fa-exclamation-triangle' : 
+                                     'fa-exclamation-circle'}"></i>
+                    <span>${message}</span>
+                `;
+                notification.className = `notification ${type} show`;
+                
+                setTimeout(() => {
+                    notification.classList.remove("show");
+                }, 3000);
+            }
+            
+            // Clear log button
+            clearLogBtn.addEventListener('click', function() {
+                logList.innerHTML = '';
+                addLogEntry('tarauni', "Log cleared", "info");
+            });
+            
+            // Initialize the interface
+            generateBreakerPanels();
+            
+            // Set up real-time updates
+            setInterval(updateReadings, 3000);
+            
+            // Initial update
+            updateReadings();
+        });
+    </script>
+</body>
+</html>

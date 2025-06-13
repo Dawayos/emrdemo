@@ -1,0 +1,1446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imam Malik Clinic | Advanced EMR System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        :root {
+            --primary: #38B6FF; /* Sky blue */
+            --secondary: #A1E1FA; /* Light blue */
+            --accent: #FF5757;
+            --dark: #2C3E50;
+            --light: #F8F9FA;
+            --text: #4A4A4A;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 80px 0;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+            position: relative;
+            font-size: 2.2rem;
+        }
+
+        .section-title:after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: var(--primary);
+            margin: 15px auto 0;
+            border-radius: 2px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2AA4EB;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(56, 182, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ===== MODAL STYLES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            overflow: auto;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s;
+            position: relative;
+        }
+
+        @keyframes modalFadeIn {
+            from {opacity: 0; transform: translateY(-50px);}
+            to {opacity: 1; transform: translateY(0);}
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 1.5rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+        }
+
+        .modal-title {
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-group input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.2);
+        }
+
+        .login-help {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .login-help a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Feature Modal Styles */
+        .feature-modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 600px;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            position: relative;
+        }
+
+        .feature-modal-icon {
+            font-size: 3rem;
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .feature-modal-title {
+            color: var(--primary);
+            text-align: center;
+            margin-bottom: 15px;
+        }
+
+        .feature-modal-sample {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+
+        /* ===== HEADER ===== */
+        header {
+            background: white;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+            position: fixed;
+            width: 100%;
+            z-index: 1000;
+            transition: var(--transition);
+        }
+
+        header.scrolled {
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            padding: 10px 0;
+        }
+
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+        }
+
+        .logo img {
+            height: 50px;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+
+        nav ul li {
+            margin-left: 30px;
+        }
+
+        nav ul li a {
+            color: var(--dark);
+            text-decoration: none;
+            font-weight: 600;
+            transition: var(--transition);
+            position: relative;
+        }
+
+        nav ul li a:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            bottom: -5px;
+            left: 0;
+            transition: var(--transition);
+        }
+
+        nav ul li a:hover:after {
+            width: 100%;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* ===== HERO SECTION ===== */
+        .hero {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            padding: 180px 0 100px;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1579684385127-1ef15d508118?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 600px;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: white;
+            line-height: 1.2;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .hero-image {
+            position: absolute;
+            right: 0;
+            bottom: -50px;
+            width: 50%;
+            max-width: 700px;
+        }
+
+        .hero-image img {
+            width: 100%;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* ===== FEATURES SECTION ===== */
+        .features {
+            background: white;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(56, 182, 255, 0.1);
+        }
+
+        .feature-card i {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+            background: var(--secondary);
+            width: 70px;
+            height: 70px;
+            line-height: 70px;
+            border-radius: 50%;
+            text-align: center;
+        }
+
+        .feature-card h3 {
+            margin-bottom: 15px;
+        }
+
+        /* ===== ABOUT SECTION ===== */
+        .about {
+            background: var(--light);
+        }
+
+        .about-container {
+            display: flex;
+            align-items: center;
+            gap: 50px;
+        }
+
+        .about-image {
+            flex: 1;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .about-image img {
+            width: 100%;
+            transition: var(--transition);
+        }
+
+        .about-image:hover img {
+            transform: scale(1.05);
+        }
+
+        .about-content {
+            flex: 1;
+        }
+
+        .about-content h2 {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .about-content h2:after {
+            margin: 15px 0;
+        }
+
+        .mission-vision {
+            margin-top: 30px;
+        }
+
+        .mission-vision h3 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        /* ===== TEAM SECTION ===== */
+        .team {
+            background: white;
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            text-align: center;
+        }
+
+        .team-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px rgba(56, 182, 255, 0.1);
+        }
+
+        .team-image {
+            height: 350px;
+            overflow: hidden;
+        }
+
+        .team-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition);
+        }
+
+        .team-card:hover .team-image img {
+            transform: scale(1.1);
+        }
+
+        .team-info {
+            padding: 20px;
+        }
+
+        .team-info h3 {
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .team-info p {
+            color: var(--text);
+            font-size: 0.9rem;
+        }
+
+        .team-social {
+            margin-top: 15px;
+        }
+
+        .team-social a {
+            display: inline-block;
+            width: 35px;
+            height: 35px;
+            line-height: 35px;
+            background: var(--secondary);
+            color: var(--primary);
+            border-radius: 50%;
+            margin: 0 5px;
+            transition: var(--transition);
+        }
+
+        .team-social a:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* ===== TESTIMONIALS ===== */
+        .testimonials {
+            background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%);
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .testimonials:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1576091160550-2173dba999ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') no-repeat center/cover;
+            opacity: 0.1;
+        }
+
+        .section-title.white {
+            color: white;
+        }
+
+        .section-title.white:after {
+            background: white;
+        }
+
+        .testimonial-slider {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .testimonial {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px); /* Safari 9+, iOS 9+ */
+             backdrop-filter: blur(10px); /* Modern browsers */
+
+            backdrop-filter: blur(10px);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 0 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .testimonial p {
+            font-size: 1.1rem;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .author {
+            font-weight: 600;
+        }
+
+        .author span {
+            display: block;
+            font-weight: normal;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        /* ===== CONTACT SECTION ===== */
+        .contact {
+            background: var(--light);
+        }
+
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 50px;
+        }
+
+        .contact-info h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .contact-details {
+            margin-bottom: 30px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .contact-item i {
+            color: var(--primary);
+            margin-right: 15px;
+            margin-top: 5px;
+        }
+
+        .contact-form .form-group {
+            margin-bottom: 20px;
+        }
+
+        .contact-form input,
+        .contact-form textarea,
+        .contact-form select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .contact-form input:focus,
+        .contact-form textarea:focus,
+        .contact-form select:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.2);
+        }
+
+        .contact-form textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+        .map-container {
+            height: 300px;
+            margin-top: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .map-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 60px 0 20px;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .footer-col h4 {
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-col h4:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 40px;
+            height: 2px;
+            background: var(--primary);
+        }
+
+        .footer-col p, .footer-col a {
+            opacity: 0.8;
+            transition: var(--transition);
+        }
+
+        .footer-col a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .footer-col a:hover {
+            opacity: 1;
+            color: var(--primary);
+            transform: translateX(5px);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            font-size: 1.2rem;
+        }
+
+        .social-links a:hover {
+            background: var(--primary);
+            transform: translateY(-3px);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 992px) {
+            .hero-image {
+                display: none;
+            }
+            .hero-content {
+                max-width: 100%;
+                text-align: center;
+            }
+            .hero-buttons {
+                justify-content: center;
+            }
+            .about-container {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            section {
+                padding: 60px 0;
+            }
+            .section-title {
+                font-size: 1.8rem;
+            }
+            nav {
+                position: fixed;
+                top: 80px;
+                left: 0;
+                width: 100%;
+                background: white;
+                box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+                padding: 20px;
+                transform: translateY(-150%);
+                transition: var(--transition);
+                z-index: 999;
+            }
+            nav.active {
+                transform: translateY(0);
+            }
+            nav ul {
+                flex-direction: column;
+            }
+            nav ul li {
+                margin: 15px 0;
+            }
+            .mobile-menu {
+                display: block;
+            }
+            .hero h1 {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-buttons {
+                flex-direction: column;
+            }
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header id="header">
+        <div class="container header-container">
+            <div class="logo">
+                <img src="Photo/logo.png" alt="Imam Malik Clinic Logo">
+                <h2>IMAM MALIK CLINIC</h2>
+            </div>
+            <nav id="navbar">
+                <ul>
+                    <li><a href="#home">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#features">Features</a></li>
+                    <li><a href="#team">Team</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="cta-buttons">
+                <a href="#" class="btn btn-secondary" id="loginBtn">Login</a>
+                <a href="#contact" class="btn btn-primary">Book Appointment</a>
+            </div>
+            <div class="mobile-menu" id="mobileMenu">
+                <i class="fas fa-bars"></i>
+            </div>
+        </div>
+    </header>
+
+    <!-- Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeModal">&times;</span>
+            <h2 class="modal-title">System Login</h2>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="userId">User ID</label>
+                    <input type="text" id="userId" placeholder="Enter your user ID" required>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" placeholder="Enter your password" required>
+                </div>
+                <div class="form-group">
+                    <label for="userType">Login As</label>
+                    <select id="userType" required>
+                        <option value="">Select User Type</option>
+                         <option value="admin">Pharmacist</option>
+                          <option value="admin">LabTeach</option>
+                           <option value="admin">Cashier</option>
+                        <option value="patient">Patient</option>
+                        <option value="doctor">Doctor</option>pha
+                        <option value="admin">Administrator</option>
+                    </select>
+                </div>
+             <button type="submit" class="btn btn-primary full-width">Login</button>
+                </form>
+                <div class="login-help">
+    <p>Forgot your password? <a href="#">Reset here</a></p>
+    <p>Don't have an account? <a href="#contact">Contact support</a></p>
+</div>
+
+        </div>
+    </div>
+
+    <!-- Feature Info Modal -->
+    <div id="featureModal" class="modal">
+        <div class="feature-modal-content">
+            <span class="close-modal" id="closeFeatureModal">&times;</span>
+            <div class="feature-modal-icon" id="modalIcon"></div>
+            <h2 class="feature-modal-title" id="modalTitle">Feature Title</h2>
+            <p id="modalDescription">Feature description will appear here.</p>
+            <div class="feature-modal-sample" id="modalSample">
+                Sample content will appear here
+            </div>
+        </div>
+    </div>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="container">
+            <div class="hero-content">
+                <h1>IMAM MALIK CLINIC</h1>
+                <p>Experience seamless care with our Advanced Electronic Medical Records system designed to transform healthcare delivery at Imam Malik Clinic.</p>
+                <div class="hero-buttons">
+                    <a href="#features" class="btn btn-primary">Explore Features</a>
+                    <a href="#contact" class="btn btn-secondary">Book Appointment</a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="https://via.placeholder.com/700x500?text=Doctor+Using+EMR" alt="Doctor using EMR system">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">Why Choose Our EMR?</h2>
+            <div class="features-grid">
+                <div class="feature-card" data-feature="records">
+                    <i class="fas fa-clock"></i>
+                    <h3>Real-time Records</h3>
+                    <p>Instant access to complete patient history from any device, anywhere.</p>
+                </div>
+                <div class="feature-card" data-feature="eprescribing">
+                    <i class="fas fa-prescription-bottle-alt"></i>
+                    <h3>E-Prescribing</h3>
+                    <p>Send error-free prescriptions directly to pharmacies with drug interaction alerts.</p>
+                </div>
+                <div class="feature-card" data-feature="scheduling">
+                    <i class="fas fa-calendar-check"></i>
+                    <h3>Appointment Scheduling</h3>
+                    <p>Patients can book, reschedule or cancel appointments 24/7 via portal.</p>
+                </div>
+                <div class="feature-card" data-feature="security">
+                    <i class="fas fa-user-shield"></i>
+                    <h3>Secure Portal</h3>
+                    <p>HIPAA-compliant data protection with 256-bit encryption and audit logs.</p>
+                </div>
+                <div class="feature-card" data-feature="lab">
+                    <i class="fas fa-vial"></i>
+                    <h3>Lab Integration</h3>
+                    <p>Seamless connection with major laboratories for instant result delivery.</p>
+                </div>
+                <div class="feature-card" data-feature="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Analytics Dashboard</h3>
+                    <p>Real-time clinical and financial reports for data-driven decisions.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="container about-container">
+            <div class="about-image">
+                <img src="building.png" alt="Imam Malik Clinic">
+            </div>
+            <div class="about-content">
+                <h2 class="section-title">About Imam Malik Clinic</h2>
+                <p>Founded in 2010, Imam Malik Clinic has grown to become a leading healthcare provider in Abuja, combining compassionate care with cutting-edge technology to deliver exceptional patient experiences.</p>
+                
+                <div class="mission-vision">
+                    <h3>Our Mission</h3>
+                    <p>To provide ethical, patient-centered healthcare through clinical excellence, digital innovation, and compassionate service.</p>
+                    
+                    <h3>Our Vision</h3>
+                    <p>To be a model for Africa's digital healthcare transformation, making quality medical care accessible to all communities.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="team" id="team">
+        <div class="container">
+            <h2 class="section-title">Meet Our Leadership</h2>
+            <div class="team-grid">
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="Photo/Dr. Aisha Muhammad.png" alt="Dr. Aisha Bala Mohammed">
+                    </div>
+                    <div class="team-info">
+                        <h3>Dr. Aisha Bala Mohammed</h3>
+                        <p>Medical Director</p>
+                        <p>MBBS, FWACP (Internal Medicine)</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="Photo/Dr. Ibrahim Musa.png" alt="Dr. Ibrahim Musa Lawal">
+                    </div>
+                    <div class="team-info">
+                        <h3>Dr. Ibrahim Musa Lawal</h3>
+                        <p>Head of Clinical Operations</p>
+                        <p>MBBS, MPH, Healthcare Management</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-card">
+                    <div class="team-image">
+                        <img src="Photo/Mr. Chinedu Okeke.png" alt="Mr. Chinedu Okeke">
+                    </div>
+                    <div class="team-info">
+                        <h3>Mr. Chinedu Okeke</h3>
+                        <p>IT & EMR Administrator</p>
+                        <p>BSc Computer Science, Health Informatics</p>
+                        <div class="team-social">
+                            <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                            <a href="#"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title white">What Our Patients Say</h2>
+            <div class="testimonial-slider">
+                <div class="testimonial">
+                    <p>"The patient portal saved me hours of waiting! I can now check my lab results and communicate with my doctor from home. Imam Malik Clinic's EMR system is truly revolutionary."</p>
+                    <div class="author">
+                        <strong>Amina Bello</strong>
+                        <span>Patient since 2018</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="container">
+            <h2 class="section-title">Contact Us</h2>
+            <div class="contact-container">
+                <div class="contact-info">
+                    <h3>Get In Touch</h3>
+                    <div class="contact-details">
+                        <div class="contact-item">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <div>
+                                <strong>Address</strong>
+                                <p>No. 179, ASO Drive, Abuja, Nigeria</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-phone-alt"></i>
+                            <div>
+                                <strong>Phone</strong>
+                                <p>+23480 3330 3300 (Main)</p>
+                                <p>+23480 2325 2677 (Emergency)</p>
+                                <p>+23480 5556 5758 (Appointments)</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email</strong>
+                                <p>info@imammalikclinic.com</p>
+                                <p>support@imammalikclinic.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="contact-form">
+                    <form id="appointmentForm">
+                        <div class="form-group">
+                            <input type="text" placeholder="Full Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" placeholder="Email Address" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="tel" placeholder="Phone Number" required>
+                        </div>
+                        <div class="form-group">
+                        <label for="department">Department</label>
+                        <select id="department" name="department" required>
+                        <option value="">Select Department</option>
+                         <option value="general">General Medicine</option>
+                         <option value="pediatrics">Pediatrics</option>
+                         <option value="gynecology">Gynecology</option>
+                         <option value="laboratory">Laboratory Services</option>
+                         </select>
+
+                        </div>
+                        <div class="form-group">
+                            <textarea placeholder="Your Message"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Book Appointment</button>
+                    </form>
+                </div>
+            </div>
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3940.923631059343!2d7.486214814786849!3d9.01274489350081!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zOcKwMDAnNDUuOSJOIDfCsDI5JzE1LjQiRQ!5e0!3m2!1sen!2sng!4v1623345678901!5m2!1sen!2sng" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div class="footer-col">
+                    <h4>Imam Malik Clinic</h4>
+                    <p>Providing exceptional healthcare services in Abuja since 2010 through clinical excellence and technological innovation.</p>
+                </div>
+                <div class="footer-col">
+                    <h4>Quick Links</h4>
+                    <a href="#home">Home</a>
+                    <a href="#about">About Us</a>
+                    <a href="#features">EMR Features</a>
+                    <a href="#team">Our Team</a>
+                    <a href="#contact">Contact</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Services</h4>
+                    <a href="#">General Medicine</a>
+                    <a href="#">Pediatrics</a>
+                    <a href="#">Gynecology</a>
+                    <a href="#">Laboratory Services</a>
+                    <a href="#">Health Checks</a>
+                </div>
+                <div class="footer-col">
+                    <h4>Legal</h4>
+                    <a href="#">Privacy Policy</a>
+                    <a href="#">Terms of Service</a>
+                    <a href="#">HIPAA Compliance</a>
+                </div>
+            </div>
+            <div class="copyright">
+                <p>&copy; 2023 Imam Malik Clinic. All rights reserved. | NDPR Compliant</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Login System with Role-Based Redirection
+        const loginBtn = document.getElementById('loginBtn');
+        const loginModal = document.getElementById('loginModal');
+        const closeModal = document.getElementById('closeModal');
+        const loginForm = document.getElementById('loginForm');
+        const closeFeatureModal = document.getElementById('closeFeatureModal');
+        const featureModal = document.getElementById('featureModal');
+
+        // Valid credentials for all user types
+        const patientCredentials = [
+            { id: "PAT", password: "Nas1234567", name: "Dr. Auwal Abubakar" },
+            { id: "MSS/IM/00197", password: "Man1234567", name: "Amina Bello" },
+            { id: "MSS/IM/00415", password: "Man1234567", name: "Ibrahim Musa" }
+        ];
+
+         const CashierCredentials = [
+            { id: "ADM/IM/SF0058", password: "AA1234567", name: "Mr. Adewale Abdulkarim" },
+             { id: "CAH", password: "Nas1234567", name: "Dr. Auwal Abubakar" },
+            { id: "ADM/IM/SF0079", password: "AA1234567", name: "Haj. Amina Abubakar" },
+            { id: "ADM/IM/SF0045", password: "AA1234567", name: "Mal. Bala Muhammad" }
+        ];
+
+         const LabTechCredentials = [
+            { id: "ADM/IM/SF0058", password: "AA1234567", name: "Mr. Adewale Abdulkarim" },
+             { id: "LAB", password: "Nas1234567", name: "Dr. Auwal Abubakar" },
+            { id: "ADM/IM/SF0079", password: "AA1234567", name: "Haj. Amina Abubakar" },
+            { id: "ADM/IM/SF0045", password: "AA1234567", name: "Mal. Bala Muhammad" }
+        ];
+
+         const PharmacistCredentials = [
+            { id: "ADM/IM/SF0058", password: "AA1234567", name: "Mr. Adewale Abdulkarim" },
+             { id: "PHA", password: "Nas1234567", name: "Dr. Auwal Abubakar" },
+            { id: "ADM/IM/SF0079", password: "AA1234567", name: "Haj. Amina Abubakar" },
+            { id: "ADM/IM/SF0045", password: "AA1234567", name: "Mal. Bala Muhammad" }
+        ];
+
+
+        const doctorCredentials = [
+            { id: "DOC/IM/MY03", password: "AB1234567", name: "Dr. Aisha Muhammad Bello" },
+             { id: "DOC", password: "Nas1234567", name: "Dr. Auwal Abubakar" },
+            { id: "DOC/IM/AU077", password: "AUn1234567", name: "Dr. Alhassan Umar Adamu" },
+            { id: "DOC/IM/MA0089", password: "MA1234567", name: "Dr. Maimuna Ahmad Aliyu" }
+        ];
+
+        const adminCredentials = [
+            { id: "ADM/IM/SF0058", password: "AA1234567", name: "Mr. Adewale Abdulkarim" },
+             { id: "ADM", password: "Nas1234567", name: "Dr. Auwal Abubakar" },
+            { id: "ADM/IM/SF0079", password: "AA1234567", name: "Haj. Amina Abubakar" },
+            { id: "ADM/IM/SF0045", password: "AA1234567", name: "Mal. Bala Muhammad" }
+        ];
+
+        // Feature data for popups
+        const featureData = {
+            records: {
+                title: "Real-time Records",
+                description: "Instant access to a complete patient history from any device, at any location.",
+                icon: '<i class="fas fa-clock"></i>',
+                sample: `Patient: John Doe (ID: MSS/IM/0034)
+Last Visit: June 10, 2023 - Routine Checkup
+Diagnosis: Hypertension (Controlled)
+Medications: Lisinopril 10mg daily
+Allergies: Penicillin, Peanuts
+Upcoming Appointment: June 15, 2023 with Dr. Aisha
+Latest Vitals: BP 120/80, Pulse 72, Temp 98.6°F`
+            },
+            eprescribing: {
+                title: "E-Prescribing",
+                description: "Send accurate, error-free prescriptions directly to pharmacies with drug interaction alerts.",
+                icon: '<i class="fas fa-prescription-bottle-alt"></i>',
+                sample: `New Prescription for: John Doe (ID: MSS/IM/0034)
+Medication: Atorvastatin 20mg
+Dosage: Take 1 tablet at bedtime
+Quantity: 30 tablets
+Refills: 3
+Pharmacy: HealthPlus Pharmacy, Wuse 2
+Interaction Check: No significant interactions found
+Status: Sent to pharmacy - Ready for pickup in 1 hour`
+            },
+            scheduling: {
+                title: "Appointment Scheduling",
+                description: "Allow patients to book, reschedule, or cancel appointments 24/7 via the portal.",
+                icon: '<i class="fas fa-calendar-check"></i>',
+                sample: `Appointment Request Confirmed
+Patient: Amina Bello (ID: MSS/IM/00197)
+Provider: Dr. Ibrahim Musa Lawal
+Date: June 20, 2023
+Time: 2:30 PM
+Location: Imam Malik Clinic, Room 205
+Appointment Type: Follow-up Visit
+Estimated Wait Time: 15 minutes
+Cancel/Reschedule: Available until June 19`
+            },
+            security: {
+                title: "Secure Portal",
+                description: "Ensure HIPAA-compliant data protection using 256-bit encryption and detailed audit logs.",
+                icon: '<i class="fas fa-user-shield"></i>',
+                sample: `Security Alert - Unusual Login Attempt
+User: admin_user
+Time: June 12, 2023 03:15 AM
+Location: Unknown IP (182.45.67.12)
+Device: Windows 10, Chrome Browser
+Action: Blocked - Requires 2FA
+Audit Log: 
+- June 12, 03:10 AM: Successful login from trusted device
+- June 11, 09:30 PM: Password changed
+- June 11, 08:45 PM: Patient record accessed (ID: MSS/IM/0034)`
+            },
+            lab: {
+                title: "Lab Integration",
+                description: "Provide seamless connectivity with major laboratories for instant result delivery.",
+                icon: '<i class="fas fa-vial"></i>',
+                sample: `Lab Results Available
+Patient: Ibrahim Musa (ID: MSS/IM/00415)
+Test: Complete Blood Count (CBC)
+Ordered By: Dr. Aisha Muhammad Bello
+Collection Date: June 10, 2023 08:30 AM
+Results:
+- WBC: 6.5 (Normal)
+- RBC: 4.8 (Normal)
+- Hemoglobin: 14.2 g/dL (Normal)
+- Platelets: 250 (Normal)
+Status: Reviewed by physician on June 11, 2023`
+            },
+            analytics: {
+                title: "Analytics Dashboard",
+                description: "Display real-time clinical analytics and insights.",
+                icon: '<i class="fas fa-chart-line"></i>',
+                sample: `Clinic Performance - June 2023
+Patients Seen: 342
+Average Wait Time: 18 minutes
+Most Common Diagnosis: Hypertension (28%)
+Prescriptions Issued: 156
+Lab Tests Ordered: 89
+Patient Satisfaction: 94%
+Top Performing Physician: Dr. Aisha (4.9/5 rating)
+Revenue: ₦5,420,000`
+            }
+        };
+
+        // Open modal when login button clicked
+        loginBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginModal.style.display = 'block';
+        });
+
+        // Close modal when X clicked
+        closeModal.addEventListener('click', () => {
+            loginModal.style.display = 'none';
+        });
+
+        // Close feature modal
+        closeFeatureModal.addEventListener('click', () => {
+            featureModal.style.display = 'none';
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === loginModal) {
+                loginModal.style.display = 'none';
+            }
+            if (e.target === featureModal) {
+                featureModal.style.display = 'none';
+            }
+        });
+
+        // Handle form submission
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const userId = document.getElementById('userId').value;
+            const password = document.getElementById('password').value;
+            const userType = document.getElementById('userType').value;
+
+            let user, redirectUrl;
+            
+            // Check credentials based on user type
+            switch(userType) {
+                case 'patient':
+                    user = patientCredentials.find(cred => 
+                        cred.id === userId && cred.password === password
+                    );
+                    redirectUrl = 'record.html';
+                    break;
+                case 'doctor':
+                    user = doctorCredentials.find(cred => 
+                        cred.id === userId && cred.password === password
+                    );
+                    redirectUrl = 'doctor-dashboard.html';
+                    break;
+                    case 'Pharmacist':
+                    user = doctorCredentials.find(cred => 
+                        cred.id === userId && cred.password === password
+                    );
+                    redirectUrl = 'Pharm.html';
+                    break;
+                    case 'Cashier':
+                    user = doctorCredentials.find(cred => 
+                        cred.id === userId && cred.password === password
+                    );
+                    redirectUrl = 'cashier.html';
+                    break;
+                    case 'LabTech':
+                    user = doctorCredentials.find(cred => 
+                        cred.id === userId && cred.password === password
+                    );
+                    redirectUrl = 'lab.html';
+                    break;
+                case 'admin':
+                    user = adminCredentials.find(cred => 
+                        cred.id === userId && cred.password === password
+                    );
+                    redirectUrl = 'admin.html';
+                    break;
+                default:
+                    alert('Please select a valid user type');
+                    return;
+            }
+
+            if (user) {
+                // Successful login - redirect to appropriate dashboard
+                window.location.href = redirectUrl;
+            } else {
+                alert('Invalid credentials. Please try again.');
+            }
+        });
+
+        // Feature card click handlers
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.addEventListener('click', function() {
+                const feature = this.getAttribute('data-feature');
+                const data = featureData[feature];
+                
+                document.getElementById('modalIcon').innerHTML = data.icon;
+                document.getElementById('modalTitle').textContent = data.title;
+                document.getElementById('modalDescription').textContent = data.description;
+                document.getElementById('modalSample').textContent = data.sample;
+                
+                featureModal.style.display = 'block';
+            });
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenu = document.getElementById('mobileMenu');
+        const navbar = document.getElementById('navbar');
+        
+        mobileMenu.addEventListener('click', () => {
+            navbar.classList.toggle('active');
+            mobileMenu.innerHTML = navbar.classList.contains('active') ? 
+                '<i class="fas fa-times"></i>' : '<i class="fas fa-bars"></i>';
+        });
+
+        // Header Scroll Effect
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            header.classList.toggle('scrolled', window.scrollY > 50);
+        });
+
+        // Smooth Scrolling for Anchor Links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu if open
+                if (navbar.classList.contains('active')) {
+                    navbar.classList.remove('active');
+                    mobileMenu.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        });
+
+        // Simple Form Submission
+        const form = document.getElementById('appointmentForm');
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('Thank you! Your appointment request has been submitted. Our team will contact you shortly.');
+            form.reset();
+        });
+
+        // Testimonial Slider (Simple Version)
+        let currentTestimonial = 0;
+        const testimonials = [
+            {
+                quote: "The patient portal saved me hours of waiting! I can now check my lab results and communicate with my doctor from home.",
+                name: "Amina Bello",
+                role: "Patient since 2018"
+            },
+            {
+                quote: "As a referring physician, I appreciate how quickly I can access my patients' records from Imam Malik Clinic's secure portal.",
+                name: "Dr. Oluwaseun Adebayo",
+                role: "Partner Physician"
+            },
+            {
+                quote: "The EMR system has streamlined our workflows significantly. We now see more patients with better documentation.",
+                name: "Nurse Fatima Yusuf",
+                role: "Staff Member"
+            }
+        ];
+
+        function showTestimonial(index) {
+            const testimonialElement = document.querySelector('.testimonial');
+            testimonialElement.innerHTML = `
+                <p>"${testimonials[index].quote}"</p>
+                <div class="author">
+                    <strong>${testimonials[index].name}</strong>
+                    <span>${testimonials[index].role}</span>
+                </div>
+            `;
+        }
+
+        // Auto-rotate testimonials every 5 seconds
+        setInterval(() => {
+            currentTestimonial = (currentTestimonial + 1) % testimonials.length;
+            showTestimonial(currentTestimonial);
+        }, 5000);
+    </script>
+</body>
+</html>

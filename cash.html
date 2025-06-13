@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Clinic - EMR Cashier Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --secondary: #475569;
+            --success: #16a34a;
+            --warning: #f59e0b;
+            --danger: #dc2626;
+            --light: #f8fafc;
+            --dark: #0f172a;
+            --card-bg: #ffffff;
+            --sidebar-bg: #f1f5f9;
+            --border: #e2e8f0;
+            --text: #334155;
+            --text-light: #64748b;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .dark-theme {
+            --primary: #3b82f6;
+            --primary-dark: #2563eb;
+            --secondary: #94a3b8;
+            --light: #0f172a;
+            --dark: #f8fafc;
+            --card-bg: #1e293b;
+            --sidebar-bg: #1e293b;
+            --border: #334155;
+            --text: #e2e8f0;
+            --text-light: #94a3b8;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--sidebar-bg);
+            color: var(--text);
+            transition: background-color 0.3s, color 0.3s;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(160deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 20px 0;
+            transition: all 0.3s;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+        }
+
+        .clinic-brand {
+            display: flex;
+            align-items: center;
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 20px;
+        }
+
+        .clinic-logo {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .clinic-logo i {
+            font-size: 24px;
+            color: var(--primary);
+        }
+
+        .clinic-name {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .clinic-tagline {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 4px;
+        }
+
+        .sidebar-menu {
+            padding: 0 15px;
+        }
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            margin-right: 12px;
+            width: 24px;
+            text-align: center;
+        }
+
+        .menu-item span {
+            font-size: 14px;
+        }
+
+        .role-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 10px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-title h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .header-title p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 5px;
+        }
+
+        .header-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .datetime-display {
+            background: var(--card-bg);
+            padding: 10px 15px;
+            border-radius: 10px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            min-width: 180px;
+        }
+
+        .current-time {
+            font-size: 22px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .current-date {
+            font-size: 14px;
+            color: var(--text-light);
+            margin-top: 3px;
+        }
+
+        .theme-toggle {
+            background: var(--card-bg);
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            font-size: 20px;
+            color: var(--text);
+            transition: all 0.3s;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--primary-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .user-info {
+            font-size: 14px;
+        }
+
+        .user-info .role {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .user-info .name {
+            font-weight: 500;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
+            border: 1px solid var(--border);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-header .icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            background: rgba(37, 99, 235, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        /* Grid Layout */
+        .col-12 { grid-column: span 12; }
+        .col-8 { grid-column: span 8; }
+        .col-6 { grid-column: span 6; }
+        .col-4 { grid-column: span 4; }
+        .col-3 { grid-column: span 3; }
+
+        /* Patient Billing */
+        .patient-info {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .patient-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(45deg, #8b5cf6, #ec4899);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .patient-details {
+            flex: 1;
+        }
+
+        .patient-details h4 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .patient-meta {
+            display: flex;
+            gap: 20px;
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        .patient-meta div {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .service-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .service-table th {
+            text-align: left;
+            padding: 12px 10px;
+            font-weight: 500;
+            color: var(--text-light);
+            font-size: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .service-table td {
+            padding: 12px 10px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .service-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .service-table .action-cell {
+            text-align: center;
+            width: 40px;
+        }
+
+        .remove-btn {
+            color: var(--danger);
+            cursor: pointer;
+        }
+
+        .totals-row {
+            font-weight: 600;
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .payment-status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-pending {
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        .status-paid {
+            background: rgba(22, 163, 74, 0.1);
+            color: var(--success);
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .method-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .method-card.active {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.05);
+            box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2);
+        }
+
+        .method-card i {
+            font-size: 28px;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .method-card .method-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .payment-form {
+            background: rgba(37, 99, 235, 0.03);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+            color: var(--text);
+            font-size: 15px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .btn-outline:hover {
+            background: rgba(0, 0, 0, 0.03);
+        }
+
+        /* Transaction Logs */
+        .transaction-log {
+            padding: 15px;
+            border-left: 3px solid var(--primary);
+            margin-bottom: 12px;
+            border-radius: 0 8px 8px 0;
+            background: var(--card-bg);
+        }
+
+        .transaction-log.success {
+            border-left-color: var(--success);
+        }
+
+        .transaction-log.warning {
+            border-left-color: var(--warning);
+        }
+
+        .log-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .log-amount {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .log-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+        /* Stats Cards */
+        .stats-card {
+            text-align: center;
+            padding: 25px 15px;
+        }
+
+        .stats-card i {
+            font-size: 32px;
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .stats-card .value {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stats-card .label {
+            font-size: 14px;
+            color: var(--text-light);
+        }
+
+        /* Queue List */
+        .queue-item {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid var(--border);
+            transition: all 0.2s;
+        }
+
+        .queue-item:hover {
+            background: rgba(37, 99, 235, 0.03);
+        }
+
+        .queue-item:last-child {
+            border-bottom: none;
+        }
+
+        .queue-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(45deg, #10b981, #06b6d4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .queue-details {
+            flex: 1;
+        }
+
+        .queue-details h4 {
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .queue-meta {
+            font-size: 13px;
+            color: var(--text-light);
+            display: flex;
+            gap: 15px;
+        }
+
+        .queue-amount {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .queue-status {
+            font-size: 12px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            background: rgba(245, 158, 11, 0.1);
+            color: var(--warning);
+        }
+
+        /* Modal */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: var(--card-bg);
+            border-radius: 16px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+
+        .modal.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(1, 1fr);
+            }
+            
+            .col-12, .col-8, .col-6, .col-4, .col-3 {
+                grid-column: span 1;
+            }
+            
+            .sidebar {
+                width: 80px;
+            }
+            
+            .sidebar .clinic-name, 
+            .sidebar .clinic-tagline, 
+            .sidebar .menu-text,
+            .sidebar .role-badge {
+                display: none;
+            }
+            
+            .clinic-brand {
+                justify-content: center;
+                padding: 0 10px 20px;
+            }
+            
+            .clinic-logo {
+                margin-right: 0;
+            }
+            
+            .menu-item {
+                justify-content: center;
+                padding: 15px;
+            }
+            
+            .menu-item i {
+                margin-right: 0;
+                font-size: 20px;
+            }
+            
+            .main-content {
+                margin-left: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .header-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .payment-methods {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .notification-icon {
+            position: relative;
+        }
+
+        .new-item {
+            animation: highlight 2s ease;
+        }
+
+        @keyframes highlight {
+            0% { background-color: rgba(37, 99, 235, 0.2); }
+            100% { background-color: transparent; }
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="clinic-brand">
+                <div class="clinic-logo">
+                    <i class="fas fa-heartbeat"></i>
+                </div>
+                <div>
+                    <div class="clinic-name">Imam Malik Clinic</div>
+                    <div class="clinic-tagline">Excellence in Healthcare</div>
+                </div>
+            </div>
+            
+            <div class="sidebar-menu">
+                <div class="menu-item active">
+                    <i class="fas fa-home"></i>
+                    <span class="menu-text">Dashboard</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-user-injured"></i>
+                    <span class="menu-text">Patients</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span class="menu-text">Billing</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-chart-line"></i>
+                    <span class="menu-text">Reports</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-cog"></i>
+                    <span class="menu-text">Settings</span>
+                </div>
+                
+                <div class="menu-item mt-4">
+                    <i class="fas fa-user-tie"></i>
+                    <span class="menu-text">Cashier View</span>
+                    <span class="role-badge">Active</span>
+                </div>
+                <div class="menu-item">
+                    <i class="fas fa-user-shield"></i>
+                    <span class="menu-text">Chief Cashier</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <div class="header-title">
+                    <h1>Cashier Dashboard</h1>
+                    <p>Manage billing, payments, and patient transactions</p>
+                </div>
+                
+                <div class="header-controls">
+                    <div class="datetime-display">
+                        <div class="current-time" id="current-time">10:45:22 AM</div>
+                        <div class="current-date" id="current-date">Friday, June 13, 2025</div>
+                    </div>
+                    
+                    <div class="theme-toggle" id="theme-toggle">
+                        <i class="fas fa-moon"></i>
+                    </div>
+                    
+                    <div class="user-profile">
+                        <div class="user-avatar">JD</div>
+                        <div class="user-info">
+                            <div class="name">Faisal Dahiru</div>
+                            <div class="role">Cashier</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <!-- Patient Billing Information -->
+                <div class="card col-8">
+                    <div class="card-header">
+                        <h3><div class="icon"><i class="fas fa-user-injured"></i></div> Patient Billing Information</h3>
+                        <button class="btn btn-outline" id="find-patient-btn">
+                            <i class="fas fa-search"></i> Find Patient
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="patient-info">
+                            <div class="patient-avatar">SJ</div>
+                            <div class="patient-details">
+                                <h4>Sarah Johnson</h4>
+                                <div class="patient-meta">
+                                    <div><i class="fas fa-id-card"></i> PT-2025-00652</div>
+                                    <div><i class="fas fa-calendar-alt"></i> June 13, 2025</div>
+                                    <div><i class="fas fa-stethoscope"></i> General Medicine</div>
+                                </div>
+                            </div>
+                            <div class="payment-status status-pending">
+                                <i class="fas fa-clock"></i> Payment Pending
+                            </div>
+                        </div>
+                        
+                        <table class="service-table">
+                            <thead>
+                                <tr>
+                                    <th>Service/Item</th>
+                                    <th>Qty</th>
+                                    <th>Unit Price</th>
+                                    <th>Total</th>
+                                    <th class="action-cell"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Consultation Fee</td>
+                                    <td>1</td>
+                                    <td>$50.00</td>
+                                    <td>$50.00</td>
+                                    <td class="action-cell"><i class="fas fa-times remove-btn"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>Blood Test</td>
+                                    <td>1</td>
+                                    <td>$35.00</td>
+                                    <td>$35.00</td>
+                                    <td class="action-cell"><i class="fas fa-times remove-btn"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>X-Ray (Chest)</td>
+                                    <td>1</td>
+                                    <td>$75.00</td>
+                                    <td>$75.00</td>
+                                    <td class="action-cell"><i class="fas fa-times remove-btn"></i></td>
+                                </tr>
+                                <tr class="totals-row">
+                                    <td colspan="3" class="text-right">Subtotal:</td>
+                                    <td>$160.00</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="totals-row">
+                                    <td colspan="3" class="text-right">Tax (5%):</td>
+                                    <td>$8.00</td>
+                                    <td></td>
+                                </tr>
+                                <tr class="totals-row">
+                                    <td colspan="3" class="text-right"><strong>Total Amount:</strong></td>
+                                    <td><strong>$168.00</strong></td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Payment Processing -->
+                <div class="card col-4">
+                    <div class="card-header">
+                        <h3><div class="icon"><i class="fas fa-credit-card"></i></div> Payment Processing</h3>
+                    </div>
+                    <div class="card-body">
+                        <h4 style="margin-bottom: 15px;">Select Payment Method:</h4>
+                        <div class="payment-methods">
+                            <div class="method-card active" data-method="cash">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <div class="method-name">Cash</div>
+                            </div>
+                            <div class="method-card" data-method="pos">
+                                <i class="fas fa-credit-card"></i>
+                                <div class="method-name">POS/Card</div>
+                            </div>
+                            <div class="method-card" data-method="transfer">
+                                <i class="fas fa-exchange-alt"></i>
+                                <div class="method-name">Transfer</div>
+                            </div>
+                            <div class="method-card" data-method="insurance">
+                                <i class="fas fa-file-invoice"></i>
+                                <div class="method-name">Insurance</div>
+                            </div>
+                            <div class="method-card" data-method="mobile">
+                                <i class="fas fa-mobile-alt"></i>
+                                <div class="method-name">Mobile</div>
+                            </div>
+                            <div class="method-card" data-method="other">
+                                <i class="fas fa-ellipsis-h"></i>
+                                <div class="method-name">Other</div>
+                            </div>
+                        </div>
+                        
+                        <div class="payment-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label>Amount Tendered</label>
+                                    <input type="text" class="form-control" value="200.00">
+                                </div>
+                                <div class="form-group">
+                                    <label>Change Due</label>
+                                    <input type="text" class="form-control" value="32.00" readonly>
+                                </div>
+                            </div>
+                            
+                            <div class="action-buttons">
+                                <button class="btn btn-outline">
+                                    <i class="fas fa-print"></i> Print Invoice
+                                </button>
+                                <button class="btn btn-primary" id="mark-paid-btn">
+                                    <i class="fas fa-check-circle"></i> Mark as Paid
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Live Queue -->
+                <div class="card col-4">
+                    <div class="card-header">
+                        <h3><div class="icon"><i class="fas fa-users"></i></div> Live Payment Queue</h3>
+                        <span class="badge bg-primary" id="queue-count">4</span>
+                    </div>
+                    <div class="card-body" style="padding: 0;" id="queue-container">
+                        <div class="queue-item">
+                            <div class="queue-avatar">DK</div>
+                            <div class="queue-details">
+                                <h4>David Kim</h4>
+                                <div class="queue-meta">
+                                    <div>PT-2025-00653</div>
+                                    <div class="queue-amount">$50.00</div>
+                                </div>
+                            </div>
+                            <div class="queue-status">Pending</div>
+                        </div>
+                        <div class="queue-item">
+                            <div class="queue-avatar">LW</div>
+                            <div class="queue-details">
+                                <h4>Lisa Wong</h4>
+                                <div class="queue-meta">
+                                    <div>PT-2025-00654</div>
+                                    <div class="queue-amount">$120.00</div>
+                                </div>
+                            </div>
+                            <div class="queue-status">Insurance</div>
+                        </div>
+                        <div class="queue-item">
+                            <div class="queue-avatar">JM</div>
+                            <div class="queue-details">
+                                <h4>James Miller</h4>
+                                <div class="queue-meta">
+                                    <div>PT-2025-00655</div>
+                                    <div class="queue-amount">$65.50</div>
+                                </div>
+                            </div>
+                            <div class="queue-status">Pending</div>
+                        </div>
+                        <div class="queue-item">
+                            <div class="queue-avatar">OD</div>
+                            <div class="queue-details">
+                                <h4>Olivia Davis</h4>
+                                <div class="queue-meta">
+                                    <div>PT-2025-00656</div>
+                                    <div class="queue-amount">$125.00</div>
+                                </div>
+                            </div>
+                            <div class="queue-status">Approval</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Transaction Logs -->
+                <div class="card col-4">
+                    <div class="card-header">
+                        <h3><div class="icon"><i class="fas fa-list-alt"></i></div> Transaction Logs</h3>
+                        <button class="btn btn-outline">
+                            <i class="fas fa-filter"></i> Filter
+                        </button>
+                    </div>
+                    <div class="card-body" id="transaction-container">
+                        <div class="transaction-log success">
+                            <div class="log-header">
+                                <strong>PT-2025-00652 - Saratu Bashir</strong>
+                                <span class="log-amount">$168.00</span>
+                            </div>
+                            <div class="log-meta">
+                                <span>Cash • Receipt #INV-2025-00652</span>
+                                <span>10:42 AM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-log">
+                            <div class="log-header">
+                                <strong>PT-2025-00651 - Aliyu Dauda</strong>
+                                <span class="log-amount">$95.00</span>
+                            </div>
+                            <div class="log-meta">
+                                <span>POS (Visa •••• 1234)</span>
+                                <span>10:30 AM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="transaction-log warning">
+                            <div class="log-header">
+                                <strong>PT-2025-00650 - Ibrahim Lawan</strong>
+                                <span class="log-amount">$210.00</span>
+                            </div>
+                            <div class="log-meta">
+                                <span>Pending Approval • Insurance (Aetna)</span>
+                                <span>10:15 AM</span>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center" style="margin-top: 15px;">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-history"></i> View All Transactions
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Daily Summary -->
+                <div class="card col-4">
+                    <div class="card-header">
+                        <h3><div class="icon"><i class="fas fa-chart-pie"></i></div> Daily Summary</h3>
+                        <div class="action-buttons">
+                            <button class="btn btn-outline" style="padding: 6px 12px;">
+                                <i class="fas fa-file-excel"></i>
+                            </button>
+                            <button class="btn btn-outline" style="padding: 6px 12px;">
+                                <i class="fas fa-file-pdf"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="stats-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div class="stats-card">
+                                <i class="fas fa-money-bill-wave"></i>
+                                <div class="value" id="cash-amount">$845.50</div>
+                                <div class="label">Cash Payments</div>
+                            </div>
+                            <div class="stats-card">
+                                <i class="fas fa-credit-card"></i>
+                                <div class="value" id="card-amount">$300.00</div>
+                                <div class="label">Card Payments</div>
+                            </div>
+                            <div class="stats-card">
+                                <i class="fas fa-file-invoice"></i>
+                                <div class="value" id="insurance-amount">$100.00</div>
+                                <div class="label">Insurance</div>
+                            </div>
+                            <div class="stats-card">
+                                <i class="fas fa-receipt"></i>
+                                <div class="value" id="transaction-count">24</div>
+                                <div class="label">Transactions</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Quick Actions -->
+                <div class="card col-4">
+                    <div class="card-header">
+                        <h3><div class="icon"><i class="fas fa-bolt"></i></div> Quick Actions</h3>
+                    </div>
+                    <div class="card-body">
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                            <button class="btn btn-outline">
+                                <i class="fas fa-receipt"></i> Reprint
+                            </button>
+                            <button class="btn btn-outline" id="refund-btn">
+                                <i class="fas fa-exchange-alt"></i> Refund
+                            </button>
+                            <button class="btn btn-outline">
+                                <i class="fas fa-search"></i> Find Patient
+                            </button>
+                            <button class="btn btn-outline" id="discount-btn">
+                                <i class="fas fa-percentage"></i> Discount
+                            </button>
+                            <button class="btn btn-outline" id="void-btn">
+                                <i class="fas fa-ban"></i> Void
+                            </button>
+                            <button class="btn btn-outline" id="adjust-btn">
+                                <i class="fas fa-sliders-h"></i> Adjust
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="find-patient-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-search"></i> Find Patient
+                </div>
+                <button class="modal-close" id="close-find-patient">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Search by Name, ID, or Phone</label>
+                    <input type="text" class="form-control" id="patient-search" placeholder="Start typing to search...">
+                </div>
+                
+                <div class="search-results" style="margin-top: 20px; max-height: 300px; overflow-y: auto;">
+                    <div class="queue-item">
+                        <div class="queue-avatar">MB</div>
+                        <div class="queue-details">
+                            <h4>Michael Brown</h4>
+                            <div class="queue-meta">
+                                <div>PT-2025-00651</div>
+                                <div><i class="fas fa-phone"></i> (555) 123-4567</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="queue-item">
+                        <div class="queue-avatar">EW</div>
+                        <div class="queue-details">
+                            <h4>Emily Wilson</h4>
+                            <div class="queue-meta">
+                                <div>PT-2025-00650</div>
+                                <div><i class="fas fa-phone"></i> (555) 234-5678</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="queue-item">
+                        <div class="queue-avatar">RG</div>
+                        <div class="queue-details">
+                            <h4>Robert Garcia</h4>
+                            <div class="queue-meta">
+                                <div>PT-2025-00649</div>
+                                <div><i class="fas fa-phone"></i> (555) 345-6789</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="refund-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-exchange-alt"></i> Process Refund
+                </div>
+                <button class="modal-close" id="close-refund">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Transaction ID</label>
+                    <input type="text" class="form-control" value="INV-2025-00652" readonly>
+                </div>
+                
+                <div class="form-group">
+                    <label>Patient</label>
+                    <input type="text" class="form-control" value="Sarah Johnson (PT-2025-00652)" readonly>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Original Amount</label>
+                        <input type="text" class="form-control" value="$168.00" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Refund Amount</label>
+                        <input type="text" class="form-control" value="$168.00">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Refund Reason</label>
+                    <select class="form-control">
+                        <option>Service not rendered</option>
+                        <option>Overcharged</option>
+                        <option>Patient request</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-outline" id="cancel-refund">Cancel</button>
+                    <button class="btn btn-danger">Process Refund</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="discount-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">
+                    <i class="fas fa-percentage"></i> Apply Discount
+                </div>
+                <button class="modal-close" id="close-discount">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Patient</label>
+                    <input type="text" class="form-control" value="David Kim (PT-2025-00653)" readonly>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Current Total</label>
+                        <input type="text" class="form-control" value="$50.00" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label>Discount Type</label>
+                        <select class="form-control">
+                            <option>Percentage</option>
+                            <option>Fixed Amount</option>
+                            <option>Senior Citizen</option>
+                            <option>Staff Discount</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Discount Value</label>
+                        <input type="text" class="form-control" value="10%">
+                    </div>
+                    <div class="form-group">
+                        <label>New Total</label>
+                        <input type="text" class="form-control" value="$45.00" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Reason for Discount</label>
+                    <textarea class="form-control" rows="3">Senior citizen discount</textarea>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn btn-outline" id="cancel-discount">Cancel</button>
+                    <button class="btn btn-primary">Apply Discount</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Update current time
+        function updateDateTime() {
+            const now = new Date();
+            const timeOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const dateOptions = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            
+            document.getElementById('current-time').textContent = now.toLocaleTimeString([], timeOptions);
+            document.getElementById('current-date').textContent = now.toLocaleDateString([], dateOptions);
+        }
+        
+        // Initial update
+        updateDateTime();
+        
+        // Update every second
+        setInterval(updateDateTime, 1000);
+        
+        // Theme toggle functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-theme');
+            const icon = themeToggle.querySelector('i');
+            
+            if (document.body.classList.contains('dark-theme')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+        
+        // Payment method selection
+        const methodCards = document.querySelectorAll('.method-card');
+        methodCards.forEach(card => {
+            card.addEventListener('click', () => {
+                methodCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+        
+        // Modal functionality
+        const findPatientModal = document.getElementById('find-patient-modal');
+        const refundModal = document.getElementById('refund-modal');
+        const discountModal = document.getElementById('discount-modal');
+        
+        // Open modals
+        document.getElementById('find-patient-btn').addEventListener('click', () => {
+            findPatientModal.classList.add('active');
+        });
+        
+        document.getElementById('refund-btn').addEventListener('click', () => {
+            refundModal.classList.add('active');
+        });
+        
+        document.getElementById('discount-btn').addEventListener('click', () => {
+            discountModal.classList.add('active');
+        });
+        
+        document.getElementById('void-btn').addEventListener('click', () => {
+            alert('Void transaction functionality would open here');
+        });
+        
+        document.getElementById('adjust-btn').addEventListener('click', () => {
+            alert('Adjust bill functionality would open here');
+        });
+        
+        // Close modals
+        document.getElementById('close-find-patient').addEventListener('click', () => {
+            findPatientModal.classList.remove('active');
+        });
+        
+        document.getElementById('close-refund').addEventListener('click', () => {
+            refundModal.classList.remove('active');
+        });
+        
+        document.getElementById('close-discount').addEventListener('click', () => {
+            discountModal.classList.remove('active');
+        });
+        
+        document.getElementById('cancel-refund').addEventListener('click', () => {
+            refundModal.classList.remove('active');
+        });
+        
+        document.getElementById('cancel-discount').addEventListener('click', () => {
+            discountModal.classList.remove('active');
+        });
+        
+        // Mark as paid button
+        document.getElementById('mark-paid-btn').addEventListener('click', function() {
+            const button = this;
+            const originalText = button.innerHTML;
+            
+            // Show processing state
+            button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            button.disabled = true;
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                // Show success
+                button.innerHTML = '<i class="fas fa-check"></i> Payment Successful!';
+                button.classList.add('btn-success');
+                
+                // Update payment status
+                document.querySelector('.payment-status').innerHTML = 
+                    '<i class="fas fa-check-circle"></i> Payment Completed';
+                document.querySelector('.payment-status').className = 'payment-status status-paid';
+                
+                // After a moment, reset button
+                setTimeout(() => {
+                    button.innerHTML = originalText;
+                    button.classList.remove('btn-success');
+                    button.disabled = false;
+                }, 2000);
+            }, 1500);
+        });
+        
+        // Simulate real-time updates
+        function simulateRealTimeUpdates() {
+            // Update queue every 8-15 seconds
+            setInterval(() => {
+                const queueContainer = document.getElementById('queue-container');
+                const queueCount = document.getElementById('queue-count');
+                const patients = [
+                    { initials: 'AK', name: 'Alex Kim', id: 'PT-2025-00657', amount: '$85.25' },
+                    { initials: 'JM', name: 'Jessica Miller', id: 'PT-2025-00658', amount: '$120.50' },
+                    { initials: 'TS', name: 'Thomas Smith', id: 'PT-2025-00659', amount: '$45.00' }
+                ];
+                
+                const randomPatient = patients[Math.floor(Math.random() * patients.length)];
+                
+                const newItem = document.createElement('div');
+                newItem.className = 'queue-item new-item';
+                newItem.innerHTML = `
+                    <div class="queue-avatar">${randomPatient.initials}</div>
+                    <div class="queue-details">
+                        <h4>${randomPatient.name}</h4>
+                        <div class="queue-meta">
+                            <div>${randomPatient.id}</div>
+                            <div class="queue-amount">${randomPatient.amount}</div>
+                        </div>
+                    </div>
+                    <div class="queue-status">New</div>
+                `;
+                
+                queueContainer.prepend(newItem);
+                queueCount.textContent = parseInt(queueCount.textContent) + 1;
+                
+                // Play notification sound (simulated)
+                console.log('Notification sound: New patient in queue');
+                
+            }, 8000 + Math.random() * 7000);
+            
+            // Update transactions every 10-20 seconds
+            setInterval(() => {
+                const transactionContainer = document.getElementById('transaction-container');
+                const transactions = [
+                    { patient: 'Alex Kim', amount: '$85.25', method: 'POS (Mastercard •••• 5678)', time: 'Just now' },
+                    { patient: 'Jessica Miller', amount: '$120.50', method: 'Insurance (Blue Cross)', time: 'Just now' },
+                    { patient: 'Thomas Smith', amount: '$45.00', method: 'Cash', time: 'Just now' }
+                ];
+                
+                const randomTransaction = transactions[Math.floor(Math.random() * transactions.length)];
+                
+                const newTransaction = document.createElement('div');
+                newTransaction.className = 'transaction-log success new-item';
+                newTransaction.innerHTML = `
+                    <div class="log-header">
+                        <strong>${randomTransaction.patient}</strong>
+                        <span class="log-amount">${randomTransaction.amount}</span>
+                    </div>
+                    <div class="log-meta">
+                        <span>${randomTransaction.method}</span>
+                        <span>${randomTransaction.time}</span>
+                    </div>
+                `;
+                
+                transactionContainer.prepend(newTransaction);
+                
+                // Update stats
+                const cashAmount = document.getElementById('cash-amount');
+                const cardAmount = document.getElementById('card-amount');
+                const insuranceAmount = document.getElementById('insurance-amount');
+                const transactionCount = document.getElementById('transaction-count');
+                
+                const amount = parseFloat(randomTransaction.amount.replace('$', ''));
+                
+                if (randomTransaction.method.includes('Cash')) {
+                    cashAmount.textContent = '$' + (parseFloat(cashAmount.textContent.replace('$', '')) + amount).toFixed(2);
+                } else if (randomTransaction.method.includes('POS')) {
+                    cardAmount.textContent = '$' + (parseFloat(cardAmount.textContent.replace('$', '')) + amount).toFixed(2);
+                } else if (randomTransaction.method.includes('Insurance')) {
+                    insuranceAmount.textContent = '$' + (parseFloat(insuranceAmount.textContent.replace('$', '')) + amount).toFixed(2);
+                }
+                
+                transactionCount.textContent = parseInt(transactionCount.textContent) + 1;
+                
+            }, 10000 + Math.random() * 10000);
+        }
+        
+        // Initialize real-time simulation
+        simulateRealTimeUpdates();
+    </script>
+</body>
+</html>

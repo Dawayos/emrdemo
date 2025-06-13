@@ -1,0 +1,2251 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Imam Malik Clinic | Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+  
+  <style>
+    /* ===== GLOBAL STYLES ===== */
+    :root {
+      --primary: #0066cc;
+      --primary-light: #3298d3;
+      --secondary: #A1E1FA;
+      --accent: #FF5757;
+      --accent-light: #ff8c8c;
+      --dark: #1a2a3a;
+      --dark-light: #2C3E50;
+      --light: #F8F9FA;
+      --text: #4A4A4A;
+      --text-light: #6c757d;
+      --success: #28a745;
+      --warning: #ffc107;
+      --info: #17a2b8;
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+      --shadow-md: 0 4px 6px rgba(0,0,0,0.1), 0 1px 3px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 25px rgba(0,0,0,0.1), 0 5px 10px rgba(0,0,0,0.05);
+      --border-radius: 8px;
+    }
+    * {
+      margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif;
+    }
+    body { 
+      color: var(--text); 
+      line-height: 1.7; 
+      overflow-x: hidden; 
+      background: #f5f7fa; 
+      font-weight: 400;
+    }
+    h1, h2, h3, h4, h5 { 
+      color: var(--dark); 
+      font-weight: 600; 
+      margin-bottom: 1rem;
+    }
+    .container {
+      width: 95%; 
+      max-width: 1400px; 
+      margin: 0 auto; 
+      padding: 0 15px;
+    }
+    section { 
+      padding: 30px 0; 
+    }
+    .section-title {
+      text-align: left; 
+      margin-bottom: 30px; 
+      position: relative; 
+      font-size: 1.8rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .section-title:after {
+      content: ''; 
+      display: block; 
+      width: 50px; 
+      height: 4px; 
+      background: var(--primary);
+      margin: 10px 0 0; 
+      border-radius: 2px;
+    }
+    .btn {
+      display: inline-flex; 
+      align-items: center;
+      padding: 10px 24px; 
+      border-radius: var(--border-radius); 
+      font-weight: 500;
+      text-decoration: none; 
+      transition: var(--transition); 
+      cursor: pointer; 
+      border: none;
+      box-shadow: var(--shadow-sm);
+      font-size: 0.95rem;
+      gap: 8px;
+    }
+    .btn i {
+      font-size: 0.9em;
+    }
+    .btn-sm {
+      padding: 8px 16px;
+      font-size: 0.85rem;
+    }
+    .btn-primary {
+      background: var(--primary); 
+      color: white;
+    }
+    .btn-primary:hover {
+      background: #0052a3; 
+      transform: translateY(-2px); 
+      box-shadow: var(--shadow-md);
+    }
+    .btn-secondary {
+      background: white; 
+      color: var(--primary); 
+      border: 1px solid var(--primary);
+    }
+    .btn-secondary:hover {
+      background: var(--primary-light); 
+      color: white;
+      border-color: var(--primary-light);
+    }
+    .btn-accent {
+      background: var(--accent); 
+      color: white;
+    }
+    .btn-accent:hover {
+      background: #e04a4a; 
+      color: white;
+    }
+    .btn-success {
+      background: var(--success); 
+      color: white;
+    }
+    .btn-warning {
+      background: var(--warning); 
+      color: #212529;
+    }
+    .btn-info {
+      background: var(--info); 
+      color: white;
+    }
+    .btn-light {
+      background: #f8f9fa; 
+      color: #212529;
+    }
+    .badge {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-primary {
+      background: var(--primary-light);
+      color: white;
+    }
+    .badge-success {
+      background: var(--success);
+      color: white;
+    }
+    .badge-warning {
+      background: var(--warning);
+      color: #212529;
+    }
+    .badge-danger {
+      background: var(--accent);
+      color: white;
+    }
+    .badge-info {
+      background: var(--info);
+      color: white;
+    }
+    .badge-light {
+      background: #e9ecef;
+      color: #495057;
+    }
+
+    /* ===== MODAL STYLES ===== */
+    .modal {
+      display: none; 
+      position: fixed; 
+      z-index: 2000; 
+      left: 0; 
+      top: 0; 
+      width: 100%;
+      height: 100%; 
+      background-color: rgba(0,0,0,0.5); 
+      overflow: auto;
+      -webkit-backdrop-filter: blur(10px); /* Safari 9+, iOS 9+ */
+      backdrop-filter: blur(10px); /* Modern browsers */
+      backdrop-filter: blur(3px);
+    }
+    .modal-dialog {
+      background: white; 
+      margin: 5% auto; 
+      padding: 30px; 
+      border-radius: var(--border-radius);
+      width: 90%; 
+      max-width: 600px; 
+      box-shadow: var(--shadow-lg);
+      animation: fadeInUp 0.4s ease-out; 
+      position: relative;
+    }
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); } 
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .close-btn {
+      position: absolute; 
+      top: 15px; 
+      right: 20px; 
+      font-size: 1.8rem; 
+      color: #999; 
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .close-btn:hover { 
+      color: var(--primary); 
+      transform: rotate(90deg);
+    }
+    .modal-icon {
+      font-size: 3rem; 
+      color: var(--primary); 
+      margin-bottom: 20px;
+      background: rgba(56,182,255,0.1); 
+      width: 80px; 
+      height: 80px; 
+      line-height: 80px; 
+      border-radius: 50%; 
+      margin: 0 auto 20px; 
+      display: flex; 
+      align-items: center; 
+      justify-content: center;
+    }
+    .modal-dialog h2 {
+      font-size: 1.8rem; 
+      margin-bottom: 15px; 
+      color: var(--dark);
+      text-align: center;
+    }
+    .modal-dialog p {
+      font-size: 1rem; 
+      line-height: 1.6; 
+      color: var(--text);
+      margin-bottom: 25px;
+      text-align: center;
+    }
+    .modal-footer {
+      display: flex;
+      justify-content: center;
+      gap: 15px;
+      margin-top: 20px;
+    }
+    
+    /* ===== DASHBOARD LAYOUT ===== */
+    .admin-dashboard {
+      display: flex; 
+      min-height: 100vh; 
+      font-family: 'Poppins', sans-serif;
+    }
+    .sidebar {
+      width: 280px; 
+      background: var(--dark); 
+      color: white; 
+      padding: 25px 0;
+      position: sticky; 
+      top: 0; 
+      height: 100vh;
+      transition: var(--transition);
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+    }
+    .sidebar .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 0 25px;
+      margin-bottom: 30px;
+    }
+    .sidebar .logo img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .sidebar .logo-text {
+      font-size: 1.3rem; 
+      font-weight: 600;
+    }
+    .sidebar ul {
+      list-style: none; 
+      padding: 0;
+    }
+    .sidebar li {
+      margin: 5px 0;
+    }
+    .sidebar a {
+      color: rgba(255,255,255,0.8); 
+      text-decoration: none; 
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 25px;
+      font-size: 0.95rem;
+      border-left: 3px solid transparent;
+    }
+    .sidebar a i {
+      width: 24px;
+      text-align: center;
+      font-size: 1.1rem;
+    }
+    .sidebar a:hover, .sidebar a.active {
+      color: white; 
+      background: rgba(255,255,255,0.1);
+      border-left-color: var(--primary-light);
+    }
+    .sidebar .menu-divider {
+      border-top: 1px solid rgba(255,255,255,0.1);
+      margin: 15px 0;
+    }
+    .main-content {
+      flex: 1; 
+      padding: 30px; 
+      background: #f5f7fa;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid rgba(0,0,0,0.1);
+    }
+    .header .user-info {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .header .user-info img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .header .user-name {
+      font-weight: 500;
+      margin-bottom: 3px;
+    }
+    .header .user-role {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+    .header .search-bar {
+      position: relative;
+      width: 300px;
+    }
+    .header .search-bar input {
+      width: 100%;
+      padding: 10px 15px 10px 40px;
+      border-radius: 50px;
+      border: 1px solid #ddd;
+      font-size: 0.9rem;
+      transition: var(--transition);
+    }
+    .header .search-bar input:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(56,182,255,0.2);
+      outline: none;
+    }
+    .header .search-bar i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-light);
+    }
+    
+    /* Stats Cards */
+    .stats-grid {
+      display: grid; 
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); 
+      gap: 20px; 
+      margin-bottom: 30px;
+    }
+    .stat-card {
+      background: white; 
+      padding: 20px; 
+      border-radius: var(--border-radius); 
+      box-shadow: var(--shadow-sm);
+      display: flex; 
+      align-items: center; 
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      border-left: 4px solid var(--primary);
+    }
+    .stat-card:hover { 
+      transform: translateY(-5px); 
+      box-shadow: var(--shadow-md);
+    }
+    .stat-card i {
+      font-size: 2rem; 
+      margin-right: 20px; 
+      color: var(--primary);
+      width: 60px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(56,182,255,0.1);
+    }
+    .stat-info h3 {
+      font-size: 1.8rem; 
+      margin-bottom: 5px;
+      color: var(--dark);
+    }
+    .stat-info p {
+      color: var(--text-light);
+      font-size: 0.9rem;
+    }
+    .stat-card .trend {
+      position: absolute;
+      right: 20px;
+      top: 20px;
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .trend.up {
+      color: var(--success);
+    }
+    .trend.down {
+      color: var(--accent);
+    }
+    
+    /* Data Tables */
+    .data-table-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      padding: 20px;
+      margin-top: 20px;
+      overflow-x: auto;
+    }
+    .data-table {
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+    .data-table th, .data-table td {
+      padding: 12px 15px; 
+      border-bottom: 1px solid #eee; 
+      text-align: left;
+    }
+    .data-table th {
+      background: #f8f9fa;
+      font-weight: 600;
+      color: var(--dark);
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.5px;
+    }
+    .data-table tr:hover td {
+      background: #f8fafd;
+    }
+    .data-table .action-btns {
+      display: flex;
+      gap: 8px;
+    }
+    .data-table .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .status-dot.active {
+      background: var(--success);
+    }
+    .status-dot.inactive {
+      background: var(--accent);
+    }
+    .status-dot.pending {
+      background: var(--warning);
+    }
+    
+    /* Calendar Widget */
+    .calendar-widget {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      padding: 20px;
+    }
+    .calendar-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .calendar-nav {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+    }
+    .calendar-nav button {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: var(--text-light);
+      transition: var(--transition);
+    }
+    .calendar-nav button:hover {
+      color: var(--primary);
+    }
+    .calendar-title {
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 10px;
+    }
+    .calendar-day-header {
+      text-align: center;
+      font-weight: 600;
+      color: var(--text-light);
+      font-size: 0.8rem;
+      padding: 5px;
+    }
+    .calendar-day {
+      aspect-ratio: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 5px;
+      border-radius: 50%;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .calendar-day:hover {
+      background: #f0f7ff;
+    }
+    .calendar-day.today {
+      background: var(--primary);
+      color: white;
+    }
+    .calendar-day.has-appointments:after {
+      content: '';
+      display: block;
+      width: 5px;
+      height: 5px;
+      background: var(--accent);
+      border-radius: 50%;
+      margin-top: 3px;
+    }
+    .calendar-day.other-month {
+      color: #ccc;
+    }
+    
+    /* Appointment List */
+    .appointment-list {
+      margin-top: 20px;
+    }
+    .appointment-card {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-left: 3px solid var(--primary);
+      transition: var(--transition);
+    }
+    .appointment-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+    .appointment-card .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #eee;
+    }
+    .appointment-card .time {
+      font-weight: 600;
+      color: var(--dark);
+    }
+    .appointment-card .status {
+      font-size: 0.75rem;
+      padding: 3px 8px;
+      border-radius: 50px;
+    }
+    .appointment-card .patient {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .appointment-card .patient img {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    .appointment-card .patient-name {
+      font-weight: 500;
+    }
+    .appointment-card .patient-id {
+      font-size: 0.8rem;
+      color: var(--text-light);
+    }
+    .appointment-card .doctor {
+      font-size: 0.85rem;
+      color: var(--text-light);
+      margin-bottom: 5px;
+    }
+    .appointment-card .reason {
+      font-size: 0.9rem;
+      margin-bottom: 10px;
+    }
+    .appointment-card .footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+    .appointment-card .actions {
+      display: flex;
+      gap: 8px;
+    }
+    
+    /* Charts */
+    .chart-container {
+      background: white;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-sm);
+      padding: 20px;
+      margin-top: 20px;
+      height: 350px;
+    }
+    
+    /* Notification Bell */
+    .notification-bell {
+      position: relative;
+      cursor: pointer;
+    }
+    .notification-badge {
+      position: absolute;
+      top: -5px;
+      right: -5px;
+      background: var(--accent);
+      color: white;
+      border-radius: 50%;
+      width: 18px;
+      height: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      font-weight: bold;
+    }
+    
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 20px;
+      color: var(--text-light);
+      font-size: 0.85rem;
+      margin-top: 40px;
+      border-top: 1px solid rgba(0,0,0,0.1);
+    }
+    
+    /* Dropdown Menu */
+  .dropdown-menu {
+  position: absolute;
+  top: 0;
+  left: 100%;
+  z-index: 9999; /* High enough to be on top of most things */
+  background-color: #34495e;
+  min-width: 200px;
+  border-radius: 4px;
+}
+
+    .dropdown-menu {
+        display: none;
+        position: absolute;
+        left: 100%;
+        top: -5px;
+        background: #34495E;
+        list-style: none;
+        padding: 5px 0;
+        margin: 0;
+        min-width: 200px;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-lg);
+        z-index: 1000;
+    }
+    .dropdown-menu li a {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 8px 15px;
+        color: white !important;
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: var(--transition);
+    }
+    .dropdown-menu li a:hover {
+        background: var(--primary);
+    }
+    .dropdown:hover .dropdown-menu {
+        display: block;
+    }
+    
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+    .form-control {
+      width: 100%;
+      padding: 10px 15px;
+      border: 1px solid #ddd;
+      border-radius: var(--border-radius);
+      font-size: 0.95rem;
+      transition: var(--transition);
+    }
+    .form-control:focus {
+      border-color: var(--primary-light);
+      box-shadow: 0 0 0 3px rgba(56,182,255,0.2);
+      outline: none;
+    }
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 0.75rem center;
+      background-size: 16px 12px;
+    }
+    
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .sidebar {
+        width: 250px;
+      }
+    }
+    @media (max-width: 992px) {
+      .sidebar {
+        width: 70px;
+        overflow: hidden;
+      }
+      .sidebar .logo-text, 
+      .sidebar a span {
+        display: none;
+      }
+      .sidebar a {
+        justify-content: center;
+        padding: 12px 0;
+        border-left: none;
+        border-radius: 0;
+      }
+      .sidebar a i {
+        font-size: 1.2rem;
+      }
+      .dropdown-menu {
+        left: 70px;
+        top: 0;
+      }
+    }
+    @media (max-width: 768px) {
+      .admin-dashboard { 
+        flex-direction: column; 
+      }
+      .sidebar {
+        width: 100%; 
+        height: auto;
+        position: static;
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+      }
+      .sidebar ul {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+      .sidebar li {
+        margin: 0;
+      }
+      .sidebar a {
+        padding: 10px 15px;
+        border-radius: var(--border-radius);
+      }
+      .sidebar .logo-text {
+        display: block;
+      }
+      .main-content {
+        padding: 20px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+      }
+      .header .search-bar {
+        width: 100%;
+      }
+      .dropdown-menu {
+        left: 0;
+        top: 100%;
+      }
+    }
+    @media (max-width: 576px) {
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      .modal-dialog {
+        width: 95%;
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Admin Dashboard -->
+<div class="admin-dashboard">
+
+ <aside class="sidebar">
+  <div class="logo">
+    <img src="Photo\logo.png" alt="Clinic Logo">
+    <span class="logo-text">IMAM MALIK CLINIC IMC Admin</span>
+  </div>
+  <ul>
+    <!-- 1. Dashboard -->
+    <li><a href="#" class="active" onclick="showSection('dashboard')"><i class="fas fa-tachometer-alt"></i><span>Dashboard</span></a></li>
+    
+    <!-- 2. All Staff Dropdown (moved to second position) -->
+    <li class="dropdown">
+      <a href="#"><i class="fas fa-chevron-down" style="margin-right: 10px;"></i><i class="fas fa-user-md"></i><span>All Staff</span></a>
+      <ul class="dropdown-menu">
+        <li><a href="#" onclick="showStaff('doctors')"><i class="fas fa-stethoscope"></i> Doctors</a></li>
+         <li><a href="#" onclick="showStaff('nurses')"><i class="fas fa-user-nurse"></i> Pharmacist</a></li>
+        <li><a href="#" onclick="showStaff('nurses')"><i class="fas fa-user-nurse"></i> Nurses</a></li>
+        <li><a href="#" onclick="showStaff('labtechs')"><i class="fas fa-microscope"></i> Lab Technicians</a></li>
+        <li><a href="#" onclick="showStaff('radiologists')"><i class="fas fa-x-ray"></i> Radiologists</a></li>
+      </ul>
+    </li>
+    
+    <!-- Remaining menu items -->
+    <li><a href="#" onclick="showSection('patients')"><i class="fas fa-user-injured"></i><span>Patient Records</span></a></li>
+    <li><a href="#" onclick="showSection('appointments')"><i class="fas fa-calendar-check"></i><span>Appointments</span></a></li>
+    <li><a href="#" onclick="showSection('prescriptions')"><i class="fas fa-prescription-bottle-alt"></i><span>Prescriptions</span></a></li>
+    <li><a href="#" onclick="showSection('lab')"><i class="fas fa-vial"></i><span>Lab Reports</span></a></li>
+    <li><a href="#" onclick="showSection('analytics')"><i class="fas fa-chart-line"></i><span>Analytics</span></a></li>
+    <li><a href="#" onclick="showSection('audit')"><i class="fas fa-shield-alt"></i><span>Security Logs</span></a></li>
+  </ul>
+</aside>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1>Admin Dashboard</h1>
+        <p>Welcome back! Today is <span id="currentDate">Monday, June 12, 2023</span></p>
+      </div>
+      <div class="user-info">
+        <div class="notification-bell">
+          <i class="fas fa-bell"></i>
+          <span class="notification-badge">3</span>
+        </div>
+        <img src="Photo/Dr. Aisha Muhammad.png" alt="User">
+        <div>
+          <div class="user-name">Dr. Aisha Bala</div>
+          <div class="user-role">Administrator</div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="active">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <i class="fas fa-user-injured"></i>
+          <div class="stat-info">
+            <h3 id="totalPatients">1,284</h3>
+            <p>Total Patients</p>
+          </div>
+          <div class="trend up">
+            <i class="fas fa-arrow-up"></i> 12%
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-calendar-check"></i>
+          <div class="stat-info">
+            <h3 id="dailyAppointments">237</h3>
+            <p>Today's Appointments</p>
+          </div>
+          <div class="trend up">
+            <i class="fas fa-arrow-up"></i> 5%
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-prescription-bottle-alt"></i>
+          <div class="stat-info">
+            <h3 id="totalPrescriptions">590</h3>
+            <p>Prescriptions This Month</p>
+          </div>
+          <div class="trend down">
+            <i class="fas fa-arrow-down"></i> 3%
+          </div>
+        </div>
+        <div class="stat-card">
+          <i class="fas fa-vial"></i>
+          <div class="stat-info">
+            <h3 id="labResults">365</h3>
+            <p>Lab Results This Week</p>
+          </div>
+          <div class="trend up">
+            <i class="fas fa-arrow-up"></i> 8%
+          </div>
+        </div>
+      </div>
+      
+      <div class="row">
+        <div class="col-md-6">
+          <div class="chart-container">
+            <h3>Patient Visits (Last 30 Days)</h3>
+            <canvas id="visitsChart"></canvas>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="chart-container">
+            <h3>Revenue Overview</h3>
+            <canvas id="revenueChart"></canvas>
+          </div>
+        </div>
+      </div>
+      
+      <h2 class="section-title">Today's Appointments</h2>
+      <div class="appointment-list">
+        <div class="appointment-card">
+          <div class="header">
+            <div class="time">09:00 AM</div>
+            <div class="status badge badge-primary">Confirmed</div>
+          </div>
+          <div class="patient">
+            <img src="https://via.placeholder.com/40" alt="Patient">
+            <div>
+              <div class="patient-name">John Doe</div>
+              <div class="patient-id">MSS/IM/0034</div>
+            </div>
+          </div>
+          <div class="doctor"><i class="fas fa-user-md"></i> Dr. Aisha Bala</div>
+          <div class="reason">Follow-up consultation for hypertension management</div>
+          <div class="footer">
+            <div><i class="fas fa-phone-alt"></i> +2348012345678</div>
+            <div class="actions">
+              <button class="btn btn-sm btn-secondary">Edit<i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-primary">Edit<i class="fas fa-check"></i></button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="appointment-card">
+          <div class="header">
+            <div class="time">10:30 AM</div>
+            <div class="status badge badge-warning">Pending</div>
+          </div>
+          <div class="patient">
+            <img src="https://via.placeholder.com/40" alt="Patient">
+            <div>
+              <div class="patient-name">Amina Bello</div>
+              <div class="patient-id">MSS/IM/00197</div>
+            </div>
+          </div>
+          <div class="doctor"><i class="fas fa-user-md"></i> Dr. Ibrahim Lawal</div>
+          <div class="reason">Initial consultation for chest pain evaluation</div>
+          <div class="footer">
+            <div><i class="fas fa-phone-alt"></i> +2348023456789</div>
+            <div class="actions">
+              <button class="btn btn-sm btn-secondary">Edit<i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-primary">Edit<i class="fas fa-check"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Patients Section -->
+    <section id="patients" style="display:none;">
+      <div class="section-title">
+        <h2>Patient Management</h2>
+        <button class="btn btn-primary" onclick="openAddPatientModal()"><i class="fas fa-plus"></i> Add Patient</button>
+      </div>
+      
+      <div class="data-table-container">
+        <div class="header" style="padding: 0; margin: 0; border: none;">
+          <div class="search-bar">
+            <i class="fas fa-search"></i>
+            <input type="text" id="patientSearch" placeholder="Search patients...">
+          </div>
+          <div class="actions">
+            <button class="btn btn-secondary"><i class="fas fa-filter"></i> Filter</button>
+            <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+          </div>
+        </div>
+        
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Patient ID</th>
+              <th>Name</th>
+              <th>Age</th>
+              <th>Gender</th>
+              <th>Last Visit</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MSS/IM/0034</td>
+              <td>
+                <div class="patient">
+                  <img src="https://via.placeholder.com/30" alt="Patient" style="width:30px;height:30px;">
+                  John Doe
+                </div>
+              </td>
+              <td>38</td>
+              <td>Male</td>
+              <td>2023-06-15</td>
+              <td><span class="status"><span class="status-dot active"></span> Active</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>MSS/IM/00197</td>
+              <td>
+                <div class="patient">
+                  <img src="https://via.placeholder.com/30" alt="Patient" style="width:30px;height:30px;">
+                  Amina Bello
+                </div>
+              </td>
+              <td>33</td>
+              <td>Female</td>
+              <td>2023-06-10</td>
+              <td><span class="status"><span class="status-dot inactive"></span> Inactive</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>MSS/IM/00542</td>
+              <td>
+                <div class="patient">
+                  <img src="https://via.placeholder.com/30" alt="Patient" style="width:30px;height:30px;">
+                  Chinedu Okeke
+                </div>
+              </td>
+              <td>45</td>
+              <td>Male</td>
+              <td>2023-06-18</td>
+              <td><span class="status"><span class="status-dot active"></span> Active</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>MSS/IM/00876</td>
+              <td>
+                <div class="patient">
+                  <img src="https://via.placeholder.com/30" alt="Patient" style="width:30px;height:30px;">
+                  Fatima Yusuf
+                </div>
+              </td>
+              <td>28</td>
+              <td>Female</td>
+              <td>2023-06-17</td>
+              <td><span class="status"><span class="status-dot active"></span> Active</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-eye"></i></button>
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        
+        <div class="footer" style="margin-top: 20px; padding: 15px 0; border-top: 1px solid #eee;">
+          <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div>Showing 1 to 4 of 124 entries</div>
+            <div style="display: flex; gap: 5px;">
+              <button class="btn btn-sm btn-secondary">Previous</button>
+              <button class="btn btn-sm btn-primary">1</button>
+              <button class="btn btn-sm btn-secondary">2</button>
+              <button class="btn btn-sm btn-secondary">3</button>
+              <button class="btn btn-sm btn-secondary">Next</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Appointments Section -->
+    <section id="appointments" style="display:none;">
+      <div class="section-title">
+        <h2>Appointment Scheduling</h2>
+        <button class="btn btn-primary" onclick="openAddAppointmentModal()"><i class="fas fa-plus"></i> New Appointment</button>
+      </div>
+      
+      <div class="calendar-widget">
+        <div class="calendar-header">
+          <div class="calendar-nav">
+            <button id="prevMonth"><i class="fas fa-chevron-left"></i></button>
+            <div class="calendar-title" id="currentMonth">June 2023</div>
+            <button id="nextMonth"><i class="fas fa-chevron-right"></i></button>
+          </div>
+          <button class="btn btn-secondary" onclick="showToday()">Today</button>
+        </div>
+        
+        <div class="calendar-grid" id="calendarDaysHeader">
+          <div class="calendar-day-header">Sun</div>
+          <div class="calendar-day-header">Mon</div>
+          <div class="calendar-day-header">Tue</div>
+          <div class="calendar-day-header">Wed</div>
+          <div class="calendar-day-header">Thu</div>
+          <div class="calendar-day-header">Fri</div>
+          <div class="calendar-day-header">Sat</div>
+        </div>
+        
+        <div class="calendar-grid" id="calendarDays"></div>
+      </div>
+      
+      <h3 style="margin: 30px 0 15px;">Upcoming Appointments</h3>
+      <div class="appointment-list">
+        <div class="appointment-card">
+          <div class="header">
+            <div class="time">Tomorrow, 09:00 AM</div>
+            <div class="status badge badge-primary">Confirmed</div>
+          </div>
+          <div class="patient">
+            <img src="https://via.placeholder.com/40" alt="Patient">
+            <div>
+              <div class="patient-name">Musa Abdullahi</div>
+              <div class="patient-id">MSS/IM/00987</div>
+            </div>
+          </div>
+          <div class="doctor"><i class="fas fa-user-md"></i> Dr. Chinedu Okeke</div>
+          <div class="reason">Neurology consultation for migraine evaluation</div>
+          <div class="footer">
+            <div><i class="fas fa-phone-alt"></i> +2348034567890</div>
+            <div class="actions">
+              <button class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-accent"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+        </div>
+        
+        <div class="appointment-card">
+          <div class="header">
+            <div class="time">Jun 20, 02:15 PM</div>
+            <div class="status badge badge-warning">Pending</div>
+          </div>
+          <div class="patient">
+            <img src="https://via.placeholder.com/40" alt="Patient">
+            <div>
+              <div class="patient-name">Grace Okon</div>
+              <div class="patient-id">MSS/IM/00765</div>
+            </div>
+          </div>
+          <div class="doctor"><i class="fas fa-user-md"></i> Dr. Fatima Yusuf</div>
+          <div class="reason">Pediatric wellness checkup</div>
+          <div class="footer">
+            <div><i class="fas fa-phone-alt"></i> +2348045678901</div>
+            <div class="actions">
+              <button class="btn btn-sm btn-secondary"><i class="fas fa-edit"></i></button>
+              <button class="btn btn-sm btn-accent"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Prescriptions Section -->
+    <section id="prescriptions" style="display:none;">
+      <div class="section-title">
+        <h2>E-Prescriptions</h2>
+        <button class="btn btn-primary" onclick="openNewPrescriptionModal()"><i class="fas fa-plus"></i> New Prescription</button>
+      </div>
+      
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Prescription ID</th>
+              <th>Patient</th>
+              <th>Date</th>
+              <th>Drug</th>
+              <th>Dosage</th>
+              <th>Pharmacy</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>RX-2023-0625</td>
+              <td>John Doe</td>
+              <td>2023-06-15</td>
+              <td>Lisinopril</td>
+              <td>10mg daily</td>
+              <td>City Pharmacy</td>
+              <td><span class="badge badge-success">Sent</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-print"></i></button>
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-redo"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>RX-2023-0626</td>
+              <td>Amina Bello</td>
+              <td>2023-06-16</td>
+              <td>Atorvastatin</td>
+              <td>20mg nightly</td>
+              <td>Abuja Meds</td>
+              <td><span class="badge badge-warning">Pending</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-print"></i></button>
+                  <button class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>RX-2023-0627</td>
+              <td>Chinedu Okeke</td>
+              <td>2023-06-17</td>
+              <td>Metformin</td>
+              <td>500mg twice daily</td>
+              <td>LifeCare Pharmacy</td>
+              <td><span class="badge badge-success">Sent</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-print"></i></button>
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-redo"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>RX-2023-0628</td>
+              <td>Fatima Yusuf</td>
+              <td>2023-06-18</td>
+              <td>Amoxicillin</td>
+              <td>500mg every 8 hours</td>
+              <td>HealthPlus Pharmacy</td>
+              <td><span class="badge badge-danger">Rejected</span></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-print"></i></button>
+                  <button class="btn btn-sm btn-primary"><i class="fas fa-paper-plane"></i></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Lab Section -->
+    <section id="lab" style="display:none;">
+      <div class="section-title">
+        <h2>Lab Integration</h2>
+        <button class="btn btn-primary" onclick="openNewLabRequestModal()"><i class="fas fa-plus"></i> New Lab Request</button>
+      </div>
+      
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Lab ID</th>
+              <th>Patient</th>
+              <th>Test</th>
+              <th>Date Ordered</th>
+              <th>Date Completed</th>
+              <th>Status</th>
+              <th>Result</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>LAB-2023-0456</td>
+              <td>John Doe</td>
+              <td>Complete Blood Count</td>
+              <td>2023-06-10</td>
+              <td>2023-06-11</td>
+              <td><span class="badge badge-success">Completed</span></td>
+              <td><a href="#" class="btn btn-sm btn-secondary"><i class="fas fa-file-pdf"></i> View</a></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-print"></i></button>
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-share"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>LAB-2023-0457</td>
+              <td>Amina Bello</td>
+              <td>Lipid Panel</td>
+              <td>2023-06-12</td>
+              <td>-</td>
+              <td><span class="badge badge-warning">In Progress</span></td>
+              <td>-</td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-print"></i></button>
+                  <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-share"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>LAB-2023-0458</td>
+              <td>Chinedu Okeke</td>
+              <td>Liver Function Test</td>
+              <td>2023-06-15</td>
+              <td>-</td>
+              <td><span class="badge badge-info">Pending</span></td>
+              <td>-</td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-print"></i></button>
+                  <button class="btn btn-sm btn-secondary" disabled><i class="fas fa-share"></i></button>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>LAB-2023-0459</td>
+              <td>Fatima Yusuf</td>
+              <td>Urinalysis</td>
+              <td>2023-06-16</td>
+              <td>2023-06-17</td>
+              <td><span class="badge badge-success">Completed</span></td>
+              <td><a href="#" class="btn btn-sm btn-secondary"><i class="fas fa-file-pdf"></i> View</a></td>
+              <td>
+                <div class="action-btns">
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-print"></i></button>
+                  <button class="btn btn-sm btn-secondary"><i class="fas fa-share"></i></button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Analytics Section -->
+    <section id="analytics" style="display:none;">
+      <h2 class="section-title">Analytics Dashboard</h2>
+      
+      <div class="row" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="chart-container">
+          <h3>Patient Visits by Department (Last 30 Days)</h3>
+          <canvas id="departmentChart"></canvas>
+        </div>
+        <div class="chart-container">
+          <h3>Appointment Status Distribution</h3>
+          <canvas id="appointmentChart"></canvas>
+        </div>
+      </div>
+      
+      <div class="chart-container" style="height: 400px;">
+        <h3>Monthly Patient Visits (2023)</h3>
+        <canvas id="monthlyVisitsChart"></canvas>
+      </div>
+    </section>
+
+    <!-- Staff Section -->
+    <section id="staffSection" style="display:none;">
+      <div class="section-title">
+        <h2 id="staffTitle">Staff Members</h2>
+        <button class="btn btn-primary" onclick="openAddStaffModal()"><i class="fas fa-plus"></i> Add Staff</button>
+      </div>
+
+      <!-- Search Bar -->
+      <div class="header" style="padding: 0; margin: 0 0 20px 0; border: none;">
+        <div class="search-bar">
+          <i class="fas fa-search"></i>
+          <input type="text" id="staffSearch" placeholder="Search by name, department or role...">
+        </div>
+        <div class="actions">
+          <button class="btn btn-secondary"><i class="fas fa-filter"></i> Filter</button>
+          <button class="btn btn-secondary"><i class="fas fa-download"></i> Export</button>
+        </div>
+      </div>
+
+      <!-- Staff Table Container -->
+      <div id="staffList" class="data-table-container"></div>
+    </section>
+
+    <!-- Audit Section -->
+    <section id="audit" style="display:none;">
+      <h2 class="section-title">Security & Access Logs</h2>
+      
+      <div class="data-table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Timestamp</th>
+              <th>User</th>
+              <th>Role</th>
+              <th>IP Address</th>
+              <th>Action</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>2023-06-18 09:15:23</td>
+              <td>Dr. Aisha Bala</td>
+              <td>Administrator</td>
+              <td>192.168.1.45</td>
+              <td>Logged in</td>
+              <td><span class="badge badge-success">Success</span></td>
+            </tr>
+            <tr>
+              <td>2023-06-18 08:42:10</td>
+              <td>Nurse Fatima</td>
+              <td>Nurse</td>
+              <td>192.168.1.32</td>
+              <td>Viewed patient record</td>
+              <td><span class="badge badge-success">Success</span></td>
+            </tr>
+            <tr>
+              <td>2023-06-17 14:23:56</td>
+              <td>Dr. Ibrahim Lawal</td>
+              <td>Doctor</td>
+              <td>192.168.1.28</td>
+              <td>Updated prescription</td>
+              <td><span class="badge badge-success">Success</span></td>
+            </tr>
+            <tr>
+              <td>2023-06-17 11:05:34</td>
+              <td>lab_tech1</td>
+              <td>Lab Technician</td>
+              <td>192.168.1.19</td>
+              <td>Uploaded lab results</td>
+              <td><span class="badge badge-success">Success</span></td>
+            </tr>
+            <tr>
+              <td>2023-06-16 17:32:45</td>
+              <td>unknown</td>
+              <td>-</td>
+              <td>102.89.32.156</td>
+              <td>Failed login attempt</td>
+              <td><span class="badge badge-danger">Failed</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    
+    <!-- Footer -->
+    <div class="footer">
+      <p>© 2023 Imam Malik Clinic, Abuja. All rights reserved.</p>
+      <p style="margin-top: 5px; font-size: 0.8rem;">
+        <a href="#" style="color: var(--primary); text-decoration: none;">Privacy Policy</a> | 
+        <a href="#" style="color: var(--primary); text-decoration: none;">Terms of Service</a> | 
+        <a href="#" style="color: var(--primary); text-decoration: none;">Contact Support</a>
+      </p>
+    </div>
+  </main>
+</div>
+
+
+<!-- Feature Modal -->
+<div id="featureModal" class="modal">
+  <div class="modal-dialog">
+    <span class="close-btn" id="closeFeatureModal">&times;</span>
+    <div class="modal-icon" id="modalIcon"></div>
+    <h2 id="modalTitle">Feature Title</h2>
+    <p id="modalDescription">This is the detailed description about the feature.</p>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" onclick="document.getElementById('featureModal').style.display='none'">Close</button>
+      <button class="btn btn-primary">Learn More</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Patient Modal -->
+<div id="addPatientModal" class="modal">
+  <div class="modal-dialog" style="max-width: 700px;">
+    <span class="close-btn" onclick="document.getElementById('addPatientModal').style.display='none'">&times;</span>
+    <h2>Add New Patient</h2>
+    
+    <form id="patientForm">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="form-group">
+          <label class="form-label">First Name</label>
+          <input type="text" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Last Name</label>
+          <input type="text" class="form-control" required>
+        </div>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="form-group">
+          <label class="form-label">Date of Birth</label>
+          <input type="date" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Gender</label>
+          <select class="form-control form-select" required>
+            <option value="">Select Gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Blood Type</label>
+          <select class="form-control form-select">
+            <option value="">Unknown</option>
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Address</label>
+        <input type="text" class="form-control">
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <input type="tel" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-control">
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Medical History Notes</label>
+        <textarea class="form-control" rows="3"></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Known Allergies</label>
+        <textarea class="form-control" rows="2"></textarea>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('addPatientModal').style.display='none'">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save Patient</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Add Appointment Modal -->
+<div id="addAppointmentModal" class="modal">
+  <div class="modal-dialog" style="max-width: 600px;">
+    <span class="close-btn" onclick="document.getElementById('addAppointmentModal').style.display='none'">&times;</span>
+    <h2>Schedule New Appointment</h2>
+    
+    <form id="appointmentForm">
+      <div class="form-group">
+        <label class="form-label">Patient</label>
+        <select class="form-control form-select" required>
+          <option value="">Select Patient</option>
+          <option value="1">John Doe (MSS/IM/0034)</option>
+          <option value="2">Amina Bello (MSS/IM/00197)</option>
+          <option value="3">Chinedu Okeke (MSS/IM/00542)</option>
+          <option value="4">Fatima Yusuf (MSS/IM/00876)</option>
+        </select>
+      </div>
+      
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+        <div class="form-group">
+          <label class="form-label">Date</label>
+          <input type="date" class="form-control" id="appointmentDate" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Time</label>
+          <input type="time" class="form-control" id="appointmentTime" required>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Doctor</label>
+        <select class="form-control form-select" required>
+          <option value="">Select Doctor</option>
+          <option value="1">Dr. Aisha Bala (Internal Medicine)</option>
+          <option value="2">Dr. Ibrahim Lawal (Cardiology)</option>
+          <option value="3">Dr. Chinedu Okeke (Neurology)</option>
+          <option value="4">Dr. Fatima Yusuf (Pediatrics)</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Reason for Visit</label>
+        <textarea class="form-control" rows="3" required></textarea>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Status</label>
+        <select class="form-control form-select" required>
+          <option value="pending">Pending</option>
+          <option value="confirmed">Confirmed</option>
+          <option value="cancelled">Cancelled</option>
+          <option value="completed">Completed</option>
+        </select>
+      </div>
+      
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" onclick="document.getElementById('addAppointmentModal').style.display='none'">Cancel</button>
+        <button type="submit" class="btn btn-primary">Schedule Appointment</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script>
+  // Set current date
+  const now = new Date();
+  const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+  document.getElementById('currentDate').textContent = now.toLocaleDateString('en-US', options);
+  
+  // Initialize charts
+  function initCharts() {
+    // Patient Visits Chart
+    const visitsCtx = document.getElementById('visitsChart').getContext('2d');
+    const visitsChart = new Chart(visitsCtx, {
+      type: 'line',
+      data: {
+        labels: ['Jun 1', 'Jun 2', 'Jun 3', 'Jun 4', 'Jun 5', 'Jun 6', 'Jun 7', 'Jun 8', 'Jun 9', 'Jun 10', 'Jun 11', 'Jun 12', 'Jun 13', 'Jun 14', 'Jun 15', 'Jun 16', 'Jun 17', 'Jun 18', 'Jun 19', 'Jun 20', 'Jun 21', 'Jun 22', 'Jun 23', 'Jun 24', 'Jun 25', 'Jun 26', 'Jun 27', 'Jun 28', 'Jun 29', 'Jun 30'],
+        datasets: [{
+          label: 'Patient Visits',
+          data: [45, 52, 48, 55, 58, 62, 70, 65, 68, 72, 75, 80, 78, 82, 85, 80, 78, 75, 82, 85, 88, 90, 92, 95, 90, 85, 88, 92, 95, 98],
+          borderColor: 'rgba(56, 182, 255, 1)',
+          backgroundColor: 'rgba(56, 182, 255, 0.1)',
+          borderWidth: 2,
+          tension: 0.4,
+          fill: true
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+    
+    // Revenue Chart
+    const revenueCtx = document.getElementById('revenueChart').getContext('2d');
+    const revenueChart = new Chart(revenueCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Consultation', 'Lab Tests', 'Procedures', 'Pharmacy', 'Other'],
+        datasets: [{
+          label: 'Revenue (₦)',
+          data: [1250000, 850000, 620000, 480000, 320000],
+          backgroundColor: [
+            'rgba(56, 182, 255, 0.7)',
+            'rgba(40, 167, 69, 0.7)',
+            'rgba(255, 193, 7, 0.7)',
+            'rgba(23, 162, 184, 0.7)',
+            'rgba(108, 117, 125, 0.7)'
+          ],
+          borderColor: [
+            'rgba(56, 182, 255, 1)',
+            'rgba(40, 167, 69, 1)',
+            'rgba(255, 193, 7, 1)',
+            'rgba(23, 162, 184, 1)',
+            'rgba(108, 117, 125, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            display: false
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            },
+            ticks: {
+              callback: function(value) {
+                return '₦' + (value / 1000) + 'k';
+              }
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+    
+    // Department Chart
+    const departmentCtx = document.getElementById('departmentChart').getContext('2d');
+    const departmentChart = new Chart(departmentCtx, {
+      type: 'doughnut',
+      data: {
+        labels: ['Internal Medicine', 'Pediatrics', 'Cardiology', 'Neurology', 'Obstetrics', 'Dermatology'],
+        datasets: [{
+          data: [320, 180, 150, 120, 90, 60],
+          backgroundColor: [
+            'rgba(56, 182, 255, 0.7)',
+            'rgba(40, 167, 69, 0.7)',
+            'rgba(255, 193, 7, 0.7)',
+            'rgba(23, 162, 184, 0.7)',
+            'rgba(220, 53, 69, 0.7)',
+            'rgba(108, 117, 125, 0.7)'
+          ],
+          borderColor: [
+            'rgba(56, 182, 255, 1)',
+            'rgba(40, 167, 69, 1)',
+            'rgba(255, 193, 7, 1)',
+            'rgba(23, 162, 184, 1)',
+            'rgba(220, 53, 69, 1)',
+            'rgba(108, 117, 125, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right'
+          }
+        }
+      }
+    });
+    
+    // Appointment Chart
+    const appointmentCtx = document.getElementById('appointmentChart').getContext('2d');
+    const appointmentChart = new Chart(appointmentCtx, {
+      type: 'pie',
+      data: {
+        labels: ['Completed', 'Confirmed', 'Pending', 'Cancelled', 'No Show'],
+        datasets: [{
+          data: [45, 25, 15, 10, 5],
+          backgroundColor: [
+            'rgba(40, 167, 69, 0.7)',
+            'rgba(56, 182, 255, 0.7)',
+            'rgba(255, 193, 7, 0.7)',
+            'rgba(220, 53, 69, 0.7)',
+            'rgba(108, 117, 125, 0.7)'
+          ],
+          borderColor: [
+            'rgba(40, 167, 69, 1)',
+            'rgba(56, 182, 255, 1)',
+            'rgba(255, 193, 7, 1)',
+            'rgba(220, 53, 69, 1)',
+            'rgba(108, 117, 125, 1)'
+          ],
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'right'
+          }
+        }
+      }
+    });
+    
+    // Monthly Visits Chart
+    const monthlyVisitsCtx = document.getElementById('monthlyVisitsChart').getContext('2d');
+    const monthlyVisitsChart = new Chart(monthlyVisitsCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
+        datasets: [{
+          label: '2023',
+          data: [1250, 1380, 1520, 1450, 1620, 1850, 0, 0, 0, 0, 0, 0],
+          backgroundColor: 'rgba(56, 182, 255, 0.7)',
+          borderColor: 'rgba(56, 182, 255, 1)',
+          borderWidth: 1
+        }, {
+          label: '2022',
+          data: [1100, 1200, 1350, 1300, 1450, 1550, 1650, 1600, 1720, 1680, 1820, 1950],
+          backgroundColor: 'rgba(200, 200, 200, 0.5)',
+          borderColor: 'rgba(200, 200, 200, 1)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: {
+            position: 'top'
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)'
+            }
+          },
+          x: {
+            grid: {
+              display: false
+            }
+          }
+        }
+      }
+    });
+  }
+  
+  // Initialize calendar
+  function initCalendar() {
+    const calendarDays = document.getElementById('calendarDays');
+    const currentMonthEl = document.getElementById('currentMonth');
+    const prevMonthBtn = document.getElementById('prevMonth');
+    const nextMonthBtn = document.getElementById('nextMonth');
+    
+    let currentDate = new Date();
+    
+    function renderCalendar() {
+      const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      const daysInMonth = lastDayOfMonth.getDate();
+      const startingDay = firstDayOfMonth.getDay();
+      
+      currentMonthEl.textContent = new Intl.DateTimeFormat('en-US', { month: 'long', year: 'numeric' }).format(currentDate);
+      
+      calendarDays.innerHTML = '';
+      
+      // Previous month days
+      const prevMonthLastDay = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+      for (let i = 0; i < startingDay; i++) {
+        const dayElement = document.createElement('div');
+        dayElement.classList.add('calendar-day', 'other-month');
+        dayElement.textContent = prevMonthLastDay - startingDay + i + 1;
+        calendarDays.appendChild(dayElement);
+      }
+      
+      // Current month days
+      const today = new Date();
+      for (let i = 1; i <= daysInMonth; i++) {
+        const dayElement = document.createElement('div');
+        dayElement.classList.add('calendar-day');
+        dayElement.textContent = i;
+        
+        // Highlight today
+        if (i === today.getDate() && currentDate.getMonth() === today.getMonth() && currentDate.getFullYear() === today.getFullYear()) {
+          dayElement.classList.add('today');
+        }
+        
+        // Add indicator for days with appointments (random for demo)
+        if (Math.random() > 0.7) {
+          dayElement.classList.add('has-appointments');
+        }
+        
+        calendarDays.appendChild(dayElement);
+      }
+      
+      // Next month days
+      const totalDays = startingDay + daysInMonth;
+      const remainingDays = 7 - (totalDays % 7);
+      if (remainingDays < 7) {
+        for (let i = 1; i <= remainingDays; i++) {
+          const dayElement = document.createElement('div');
+          dayElement.classList.add('calendar-day', 'other-month');
+          dayElement.textContent = i;
+          calendarDays.appendChild(dayElement);
+        }
+      }
+    }
+    
+    prevMonthBtn.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() - 1);
+      renderCalendar();
+    });
+    
+    nextMonthBtn.addEventListener('click', () => {
+      currentDate.setMonth(currentDate.getMonth() + 1);
+      renderCalendar();
+    });
+    
+    function showToday() {
+      currentDate = new Date();
+      renderCalendar();
+    }
+    
+    window.showToday = showToday;
+    
+    renderCalendar();
+  }
+  
+  // Initialize date pickers
+  function initDatePickers() {
+    flatpickr("#appointmentDate", {
+      minDate: "today",
+      dateFormat: "Y-m-d",
+      defaultDate: new Date()
+    });
+    
+    flatpickr("#appointmentTime", {
+      enableTime: true,
+      noCalendar: true,
+      dateFormat: "H:i",
+      minTime: "08:00",
+      maxTime: "18:00",
+      minuteIncrement: 15
+    });
+  }
+  
+  // Feature Data
+  const featureData = {
+    'Real-time Records': {
+      icon: '<i class="fas fa-clock"></i>',
+      description: 'Our advanced patient records system provides instant access to complete medical histories from any device, anywhere. Features include:<ul style="text-align: left; margin-top: 10px;"><li>Real-time updates across all devices</li><li>Comprehensive medical history tracking</li><li>Secure cloud-based storage with 256-bit encryption</li><li>Customizable templates for efficient documentation</li></ul>'
+    },
+    'E-Prescribing': {
+      icon: '<i class="fas fa-prescription-bottle-alt"></i>',
+      description: 'Send error-free prescriptions directly to pharmacies with our integrated e-prescribing system. Benefits include:<ul style="text-align: left; margin-top: 10px;"><li>Automatic drug interaction alerts</li><li>Formulary checking against insurance plans</li><li>Electronic transmission to preferred pharmacies</li><li>Digital signature capability</li></ul>'
+    },
+    'Appointment Scheduling': {
+      icon: '<i class="fas fa-calendar-check"></i>',
+      description: 'Our comprehensive scheduling system allows patients to book, reschedule or cancel appointments 24/7 via patient portal. Features include:<ul style="text-align: left; margin-top: 10px;"><li>Automated reminders via SMS and email</li><li>Waitlist management</li><li>Provider availability in real-time</li><li>Custom appointment types and durations</li></ul>'
+    },
+    'Secure Portal': {
+      icon: '<i class="fas fa-user-shield"></i>',
+      description: 'HIPAA-compliant data protection with enterprise-grade security features:<ul style="text-align: left; margin-top: 10px;"><li>256-bit encryption for all data</li><li>Detailed audit logs of all access and changes</li><li>Role-based access controls</li><li>Two-factor authentication options</li></ul>'
+    },
+    'Lab Integration': {
+      icon: '<i class="fas fa-vial"></i>',
+      description: 'Seamless connection with major laboratories for instant result delivery and management:<ul style="text-align: left; margin-top: 10px;"><li>Direct interface with major lab systems</li><li>Automatic result normalization</li><li>Critical result alerts</li><li>Trend analysis and graphing</li></ul>'
+    },
+    'Analytics Dashboard': {
+      icon: '<i class="fas fa-chart-line"></i>',
+      description: 'Real-time clinical and financial reports for data-driven decision making:<ul style="text-align: left; margin-top: 10px;"><li>Customizable dashboards</li><li>Financial performance metrics</li><li>Clinical quality measures</li><li>Export to Excel/PDF functionality</li></ul>'
+    }
+  };
+
+  function showSection(id) {
+    document.querySelectorAll("main section").forEach(sec => sec.style.display = "none");
+    document.getElementById(id).style.display = "block";
+    document.querySelectorAll(".sidebar a").forEach(a => a.classList.remove("active"));
+    document.querySelector(`.sidebar a[onclick="showSection('${id}')"]`).classList.add("active");
+    
+    // Reinitialize charts when analytics section is shown
+    if (id === 'analytics') {
+      initCharts();
+    }
+  }
+
+  function openFeatureModal(title) {
+    const data = featureData[title];
+    if (!data) return;
+
+    document.getElementById('modalTitle').textContent = title;
+    document.getElementById('modalDescription').innerHTML = data.description;
+    document.getElementById('modalIcon').innerHTML = data.icon;
+    document.getElementById('featureModal').style.display = 'block';
+  }
+  
+  function openAddPatientModal() {
+    document.getElementById('addPatientModal').style.display = 'block';
+  }
+  
+  function openAddAppointmentModal() {
+    document.getElementById('addAppointmentModal').style.display = 'block';
+  }
+  
+  function openNewPrescriptionModal() {
+    openFeatureModal('E-Prescribing');
+  }
+ 
+  function openNewLabRequestModal() {
+    openFeatureModal('Lab Integration');
+  }
+  
+  function openAddStaffModal() {
+    openFeatureModal('Staff Management');
+  }
+
+  document.getElementById('closeFeatureModal').addEventListener('click', () => {
+    document.getElementById('featureModal').style.display = 'none';
+  });
+
+  window.addEventListener('click', e => {
+    if (e.target === document.getElementById('featureModal')) {
+      document.getElementById('featureModal').style.display = 'none';
+    }
+    if (e.target === document.getElementById('addPatientModal')) {
+      document.getElementById('addPatientModal').style.display = 'none';
+    }
+    if (e.target === document.getElementById('addAppointmentModal')) {
+      document.getElementById('addAppointmentModal').style.display = 'none';
+    }
+  });
+
+  const staffData = {
+  doctors: [
+    { name: "Dr. Aisha Bala", specialty: "Internal Medicine", license: "MBBS, FWACP", email: "abala@imc.com", phone: "+23480 1234 5678" },
+    { name: "Dr. Ibrahim Lawal", specialty: "Cardiology", license: "MD, MPH", email: "ilawal@imc.com", phone: "+23480 2345 6789" },
+    { name: "Dr. Chinedu Okeke", specialty: "Neurology", license: "MD, PhD", email: "chokeke@imc.com", phone: "+23480 3456 7890" },
+    { name: "Dr. Fatima Yusuf", specialty: "Pediatrics", license: "MBBS", email: "fyusuf@imc.com", phone: "+23480 4567 8901" },
+    { name: "Dr. Muhammad Ali", specialty: "Dermatology", license: "MD", email: "mali@imc.com", phone: "+23480 5678 9012" },
+    { name: "Dr. Hauwa Suleiman", specialty: "Obstetrics", license: "MBBS, MSc", email: "hsuleiman@imc.com", phone: "+23480 6789 0123" },
+    { name: "Dr. Umar Bello", specialty: "Orthopedics", license: "MD, FRCS", email: "ubello@imc.com", phone: "+23480 7890 1234" },
+    { name: "Dr. Zainab Musa", specialty: "Oncology", license: "MD", email: "zmusa@imc.com", phone: "+23480 8901 2345" },
+    { name: "Dr. Kabir Adeyemi", specialty: "Gastroenterology", license: "MD", email: "kadeyemi@imc.com", phone: "+23480 9012 3456" },
+    { name: "Dr. Halima Abubakar", specialty: "ENT", license: "MD", email: "habubakar@imc.com", phone: "+23480 0123 4567" },
+    { name: "Dr. Bashir Idris", specialty: "Psychiatry", license: "MD", email: "bidris@imc.com", phone: "+23480 1234 5678" },
+    { name: "Dr. Rukayya Gambo", specialty: "Pulmonology", license: "MD", email: "rgambo@imc.com", phone: "+23480 2345 6789" }
+  ],
+  nurses: [
+    { name: "Nurse Maryam Okoro", department: "ICU", license: "RN, BNurs", email: "mokoro@imc.com", phone: "+23480 3456 7890" },
+    { name: "Nurse Adesuwa Eze", department: "ER", license: "RN", email: "aeze@imc.com", phone: "+23480 4567 8901" },
+    { name: "Nurse Blessing Nwosu", department: "Maternity", license: "RN, BNurs", email: "bnwosu@imc.com", phone: "+23480 5678 9012" },
+    { name: "Nurse Esther Agbo", department: "General", license: "RN", email: "eagbo@imc.com", phone: "+23480 6789 0123" },
+    { name: "Nurse Chinwe Okonkwo", department: "Surgery", license: "RN, BNurs", email: "cokonkwo@imc.com", phone: "+23480 7890 1234" },
+    { name: "Nurse Joy Ekene", department: "ICU", license: "RN", email: "jekene@imc.com", phone: "+23480 8901 2345" },
+    { name: "Nurse Ngozi Nnamdi", department: "ER", license: "RN, BNurs", email: "nnnamdi@imc.com", phone: "+23480 9012 3456" },
+    { name: "Nurse Adaobi Onyekachi", department: "Maternity", license: "RN", email: "aonyekachi@imc.com", phone: "+23480 0123 4567" },
+    { name: "Nurse Chioma Ani", department: "General", license: "RN, BNurs", email: "cani@imc.com", phone: "+23480 1234 5678" },
+    { name: "Nurse Ugochi Mbata", department: "Surgery", license: "RN", email: "umbata@imc.com", phone: "+23480 2345 6789" },
+    { name: "Nurse Kemi Alabi", department: "ICU", license: "RN, BNurs", email: "kalabi@imc.com", phone: "+23480 3456 7890" },
+    { name: "Nurse Eberechukwu Ugwu", department: "ER", license: "RN", email: "eugwu@imc.com", phone: "+23480 4567 8901" }
+  ],
+  labtechs: [
+    { name: "Lab Tech Daniel Nwachukwu", certification: "MLT", email: "dnwachukwu@imc.com", phone: "+23480 5678 9012" },
+    { name: "Lab Tech Olamide Adeoye", certification: "CLS", email: "oadeoye@imc.com", phone: "+23480 6789 0123" },
+    { name: "Lab Tech Chidi Obi", certification: "MT", email: "cobi@imc.com", phone: "+23480 7890 1234" },
+    { name: "Lab Tech Ifeoma Okorie", certification: "MLS", email: "iokorie@imc.com", phone: "+23480 8901 2345" },
+    { name: "Lab Tech Tunde Salako", certification: "CLS (ASCP)", email: "tsalako@imc.com", phone: "+23480 9012 3456" },
+    { name: "Lab Tech Amaka Eze", certification: "MLT", email: "aeze@imc.com", phone: "+23480 0123 4567" },
+    { name: "Lab Tech Femi Johnson", certification: "CLS", email: "fjohnson@imc.com", phone: "+23480 1234 5678" },
+    { name: "Lab Tech Nneka Okoro", certification: "MT", email: "nokoro@imc.com", phone: "+23480 2345 6789" },
+    { name: "Lab Tech Chigozie Nwosu", certification: "MLS", email: "cnwosu@imc.com", phone: "+23480 3456 7890" },
+    { name: "Lab Tech Taiwo Adebayo", certification: "CLS (ASCP)", email: "tadebayo@imc.com", phone: "+23480 4567 8901" },
+    { name: "Lab Tech Tope Babatunde", certification: "MLT", email: "tbabatunde@imc.com", phone: "+23480 5678 9012" },
+    { name: "Lab Tech Kelechi Ude", certification: "CLS", email: "kude@imc.com", phone: "+23480 6789 0123" }
+  ],
+  Pharmacist: [
+  { name: "Abubakar Muhammad Isah", department: "General", license: "PH/2018/0432", email: "abubakar.isah@pharma.ng", phone: "+23480 7000 7788" },
+  { name: "Amina Ibrahim Aiminu", department: "ICU", license: "PH/2016/0876", email: "amina.aiminu@pharma.ng", phone: "+23480 7000 3344" },
+  { name: "Dr. Umar Sani Bello", department: "ER", license: "PH/2019/0987", email: "umar.bello@pharma.ng", phone: "+23480 7000 5566" },
+  { name: "Hadiza Kabir Yusuf", department: "Maternity", license: "PH/2017/0321", email: "hadiza.yusuf@pharma.ng", phone: "+23480 7000 2233" },
+  { name: "Bashir Auwal Adamu", department: "Pediatrics", license: "PH/2020/0123", email: "bashir.adamu@pharma.ng", phone: "+23480 7000 6677" },
+  { name: "Zainab Lawal Garba", department: "General", license: "PH/2021/0345", email: "zainab.garba@pharma.ng", phone: "+23480 7000 8899" },
+  { name: "Dr. Muhammad Aliyu Danko", department: "ICU", license: "PH/2015/0456", email: "muhammad.danko@pharma.ng", phone: "+23480 7000 1122" },
+  { name: "Hauwa Tanko Dauda", department: "ER", license: "PH/2013/0765", email: "hauwa.dauda@pharma.ng", phone: "+23480 7000 9900" },
+  { name: "Kabir Bako Saidu", department: "Maternity", license: "PH/2022/0876", email: "kabir.saidu@pharma.ng", phone: "+23480 7000 0011" },
+  { name: "Halima Jibril Tijjani", department: "Pediatrics", license: "PH/2020/0123", email: "halima.tijjani@pharma.ng", phone: "+23480 7000 6677" },
+  { name: "Dr. Yusuf Musa Kofar", department: "General", license: "PH/2016/0211", email: "yusuf.kofar@pharma.ng", phone: "+23480 7000 1122" },
+  { name: "Fatima Suleiman Balarabe", department: "ICU", license: "PH/2019/0433", email: "fatima.balarabe@pharma.ng", phone: "+23480 7000 2233" }
+],
+  radiologists: [
+    { name: "Dr. Uche Okafor", qualification: "MD", email: "uokafor@imc.com", phone: "+23480 7890 1234" },
+    { name: "Dr. Ngozi Eze", qualification: "MBBS", email: "neze@imc.com", phone: "+23480 8901 2345" },
+    { name: "Dr. Kingsley Oranekwu", qualification: "MD", email: "koranekwu@imc.com", phone: "+23480 9012 3456" },
+    { name: "Dr. Patience Akpan", qualification: "MBBS, DMRD", email: "pakpan@imc.com", phone: "+23480 0123 4567" },
+    { name: "Dr. Victor Nwosu", qualification: "MD", email: "vnwosu@imc.com", phone: "+23480 1234 5678" },
+    { name: "Dr. Florence Ofili", qualification: "MBBS", email: "fofili@imc.com", phone: "+23480 2345 6789" },
+    { name: "Dr. Henry Okon", qualification: "MD", email: "hokon@imc.com", phone: "+23480 3456 7890" },
+    { name: "Dr. Chioma Nduka", qualification: "MBBS", email: "cnduka@imc.com", phone: "+23480 4567 8901" },
+    { name: "Dr. Gideon Balogun", qualification: "MD", email: "gbalogun@imc.com", phone: "+23480 5678 9012" },
+    { name: "Dr. Sandra Ebi", qualification: "MBBS", email: "sebi@imc.com", phone: "+23480 6789 0123" },
+    { name: "Dr. Samuel Uzochukwu", qualification: "MD", email: "suzochukwu@imc.com", phone: "+23480 7890 1234" },
+    { name: "Dr. Helen Onwumelu", qualification: "MBBS", email: "honwumelu@imc.com", phone: "+23480 8901 2345" }
+  ]
+};
+function showStaff(type) {
+  const section = document.getElementById("staffSection");
+  const title = document.getElementById("staffTitle");
+  const container = document.getElementById("staffList");
+
+  section.style.display = "block";
+  title.textContent = `${type.charAt(0).toUpperCase() + type.slice(1)} List`;
+
+  // Scroll to top
+  window.scrollTo({ top: section.offsetTop, behavior: 'smooth' });
+
+  // Show initial data
+  renderStaffTable(staffData[type]);
+
+  // Setup filter
+  const searchInput = document.getElementById("staffSearch");
+  searchInput.value = "";
+  searchInput.oninput = () => {
+    const query = searchInput.value.toLowerCase();
+    const filtered = staffData[type].filter(staff =>
+      staff.name.toLowerCase().includes(query) ||
+      staff.department?.toLowerCase().includes(query) ||
+      staff.specialty?.toLowerCase().includes(query)
+    );
+    renderStaffTable(filtered);
+  };
+}
+
+function renderStaffTable(data) {
+  let html = `
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Specialty / Department</th>
+          <th>Certification</th>
+          <th>Email</th>
+          <th>Phone</th>
+        </tr>
+      </thead>
+      <tbody>
+  `;
+
+  data.forEach(staff => {
+    html += `
+      <tr>
+        <td>${staff.name}</td>
+        <td>${staff.department || staff.specialty || '-'}</td>
+        <td>${staff.license || staff.certification || '-'}</td>
+        <td><a href="mailto:${staff.email}">${staff.email}</a></td>
+        <td>${staff.phone}</td>
+      </tr>
+    `;
+  });
+
+  html += `</tbody></table>`;
+  document.getElementById("staffList").innerHTML = html;
+}
+  
+  // Animate stats counters
+  function animateStats() {
+    const stats = [
+      { id: 'totalPatients', target: 1284 },
+      { id: 'dailyAppointments', target: 237 },
+      { id: 'totalPrescriptions', target: 590 },
+      { id: 'labResults', target: 365 }
+    ];
+    
+    stats.forEach(stat => {
+      const element = document.getElementById(stat.id);
+      const duration = 2000; // 2 seconds
+      const step = Math.floor(stat.target / (duration / 16)); // 60fps
+      let current = 0;
+      
+      const timer = setInterval(() => {
+        current += step;
+        if (current >= stat.target) {
+          clearInterval(timer);
+          current = stat.target;
+        }
+        element.textContent = current.toLocaleString();
+      }, 16);
+    });
+  }
+  
+  // Initialize everything when DOM is loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    initCharts();
+    initCalendar();
+    initDatePickers();
+    animateStats();
+    
+    // Set dashboard as active
+    showSection('dashboard');
+    
+    // Set today's date in appointment form
+    const today = new Date();
+    document.getElementById('appointmentDate').value = today.toISOString().split('T')[0];
+    
+    // Set default time to next hour
+    const nextHour = new Date();
+    nextHour.setHours(nextHour.getHours() + 1, 0, 0, 0);
+    document.getElementById('appointmentTime').value = nextHour.toTimeString().substring(0, 5);
+  });
+
+  
+
+</script>
+
+</body>
+</html>

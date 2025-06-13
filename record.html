@@ -1,0 +1,1921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Imam Malik Clinic | Patient Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== GLOBAL STYLES ===== */
+        :root {
+            --primary: #38B6FF; /* Sky blue */
+            --secondary: #A1E1FA; /* Light blue */
+            --accent: #FF5757;
+            --success: #4CAF50;
+            --warning: #FF9800;
+            --purple: #9C27B0;
+            --dark: #2C3E50;
+            --light: #F8F9FA;
+            --text: #4A4A4A;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+            background: #f5f7fa;
+        }
+
+        h1, h2, h3, h4 {
+            color: var(--dark);
+            font-weight: 700;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: var(--transition);
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2AA4EB;
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(56, 182, 255, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: white;
+        }
+
+        /* ===== DASHBOARD STYLES ===== */
+        .dashboard {
+            padding: 20px 0;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .user-avatar {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            font-size: 1.8rem;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 5px 15px rgba(56, 182, 255, 0.3);
+        }
+
+        .user-info h3 {
+            margin-bottom: 8px;
+            font-size: 1.4rem;
+        }
+
+        .user-info p {
+            color: var(--text);
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+
+        .logout-btn {
+            background: var(--accent);
+            color: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            font-size: 1rem;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logout-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 87, 87, 0.3);
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .dashboard-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.1);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .card-header h3 {
+            color: var(--primary);
+            font-size: 1.3rem;
+        }
+
+        .card-header i {
+            font-size: 1.8rem;
+            color: var(--primary);
+            opacity: 0.2;
+            position: absolute;
+            right: 0;
+            top: -10px;
+            z-index: -1;
+        }
+
+        .appointment-card {
+            border-left: 5px solid var(--primary);
+        }
+
+        .medical-card {
+            border-left: 5px solid var(--success);
+        }
+
+        .lab-card {
+            border-left: 5px solid var(--warning);
+        }
+
+        .prescription-card {
+            border-left: 5px solid var(--purple);
+        }
+
+        .telemedicine-card {
+            border-left: 5px solid #3F51B5;
+        }
+
+        .reminders-card {
+            border-left: 5px solid #FF5722;
+        }
+
+        .billing-card {
+            border-left: 5px solid #607D8B;
+        }
+
+        .messages-card {
+            border-left: 5px solid #E91E63;
+        }
+
+        .appointment-list, .prescription-list, .reminder-list, .billing-list, .message-list {
+            list-style: none;
+        }
+
+        .appointment-list li, .prescription-list li, .reminder-list li, .billing-list li, .message-list li {
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .appointment-list li:last-child, 
+        .prescription-list li:last-child, 
+        .reminder-list li:last-child,
+        .billing-list li:last-child,
+        .message-list li:last-child {
+            border-bottom: none;
+        }
+
+        .appointment-date {
+            font-weight: bold;
+            font-size: 1.05rem;
+        }
+
+        .appointment-status {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .status-confirmed {
+            background: #E8F5E9;
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: #FFF8E1;
+            color: var(--warning);
+        }
+
+        .status-completed {
+            background: #E3F2FD;
+            color: #2196F3;
+        }
+
+        .status-overdue {
+            background: #FFEBEE;
+            color: var(--accent);
+        }
+
+        .medical-info {
+            margin-bottom: 18px;
+        }
+
+        .medical-info h4 {
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+            color: var(--dark);
+        }
+
+        .medical-info p {
+            font-size: 0.95rem;
+            color: var(--text);
+            opacity: 0.9;
+        }
+
+        .view-all {
+            text-align: right;
+            margin-top: 15px;
+        }
+
+        .view-all a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.95rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .view-all a:hover {
+            color: #2AA4EB;
+        }
+
+        .full-width-card {
+            grid-column: 1 / -1;
+        }
+
+        .vital-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px 15px;
+            background: #F5F5F5;
+            border-radius: 10px;
+            transition: var(--transition);
+        }
+
+        .stat-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin-bottom: 5px;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 0.85rem;
+            color: var(--text);
+            opacity: 0.8;
+        }
+
+        /* ===== MODAL STYLES ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            -webkit-backdrop-filter: blur(10px); /* Safari 9+, iOS 9+ */
+            backdrop-filter: blur(10px); /* Modern browsers */
+            backdrop-filter: blur(5px);
+            overflow: auto;
+            animation: fadeIn 0.3s;
+        }
+
+        @keyframes fadeIn {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 40px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 700px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2);
+            animation: slideIn 0.4s;
+            position: relative;
+        }
+
+        @keyframes slideIn {
+            from {transform: translateY(-50px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            font-size: 1.8rem;
+            color: var(--text);
+            cursor: pointer;
+            transition: var(--transition);
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .close-modal:hover {
+            color: var(--accent);
+            background: #FFEBEE;
+        }
+
+        .modal-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--primary);
+            font-size: 1.8rem;
+            position: relative;
+            padding-bottom: 15px;
+        }
+
+        .modal-title:after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .form-group input, 
+        .form-group select, 
+        .form-group textarea {
+            width: 100%;
+            padding: 14px 18px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #f9f9f9;
+        }
+
+        .form-group input:focus, 
+        .form-group select:focus, 
+        .form-group textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.2);
+            background: white;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 20px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* ===== TELEMEDICINE STYLES ===== */
+        .telemedicine-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .video-container {
+            background: #333;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            height: 0;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            object-fit: cover;
+        }
+
+        .remote-video {
+            background: #222;
+        }
+
+        .local-video {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 25%;
+            height: 25%;
+            border-radius: 8px;
+            overflow: hidden;
+            z-index: 10;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.3);
+            border: 2px solid white;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .video-control-btn {
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 1.2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .video-control-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        .video-control-btn.active {
+            background: white;
+            color: var(--primary);
+        }
+
+        .video-control-btn.end-call {
+            background: var(--accent);
+        }
+
+        .telemedicine-chat {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            font-weight: 600;
+            font-size: 1.1rem;
+            background: #f9f9f9;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chat-header i {
+            color: var(--primary);
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            margin-bottom: 5px;
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            position: relative;
+            animation: messageIn 0.3s ease-out;
+        }
+
+        @keyframes messageIn {
+            from {transform: translateY(10px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        .message.received {
+            align-self: flex-start;
+            background: #F1F1F1;
+            border-radius: 0 18px 18px 18px;
+            color: var(--dark);
+        }
+
+        .message.sent {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+            border-radius: 18px 0 18px 18px;
+        }
+
+        .message-time {
+            display: block;
+            font-size: 0.7rem;
+            opacity: 0.7;
+            margin-top: 5px;
+            text-align: right;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+            background: #f9f9f9;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 18px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            margin-right: 10px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+        }
+
+        .chat-input input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(56, 182, 255, 0.2);
+        }
+
+        .chat-input button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.2rem;
+        }
+
+        .chat-input button:hover {
+            background: #2AA4EB;
+            transform: translateY(-2px);
+        }
+
+        /* ===== REMINDER STYLES ===== */
+        .reminder-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+            transition: var(--transition);
+        }
+
+        .reminder-item:hover {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .reminder-item:last-child {
+            border-bottom: none;
+        }
+
+        .reminder-time {
+            font-weight: bold;
+            margin-right: 15px;
+            min-width: 90px;
+            font-size: 1.05rem;
+            color: var(--dark);
+        }
+
+        .reminder-details {
+            flex: 1;
+        }
+
+        .reminder-details h4 {
+            margin-bottom: 5px;
+            font-size: 1.05rem;
+        }
+
+        .reminder-details p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .reminder-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .reminder-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: var(--text);
+            transition: var(--transition);
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .reminder-btn:hover {
+            background: #f0f0f0;
+            color: var(--primary);
+        }
+
+        .add-reminder-form {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        /* ===== BILLING STYLES ===== */
+        .billing-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .billing-description {
+            flex: 1;
+        }
+
+        .billing-description h4 {
+            margin-bottom: 5px;
+            font-size: 1.05rem;
+        }
+
+        .billing-description p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .billing-amount {
+            font-weight: bold;
+            color: var(--dark);
+            margin-left: 15px;
+        }
+
+        .billing-status {
+            padding: 5px 12px;
+            border-radius: 50px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 15px;
+        }
+
+        /* ===== MESSAGES STYLES ===== */
+        .message-item {
+            display: flex;
+            gap: 15px;
+        }
+
+        .message-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: var(--secondary);
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .message-date {
+            font-size: 0.8rem;
+            opacity: 0.7;
+        }
+
+        .message-preview {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* ===== RESPONSIVE DESIGN ===== */
+        @media (max-width: 1200px) {
+            .telemedicine-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .dashboard-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            }
+        }
+
+        @media (max-width: 768px) {
+            .dashboard-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+            
+            .logout-btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .vital-stats {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .modal-content {
+                padding: 30px 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .video-controls {
+                gap: 10px;
+            }
+            
+            .video-control-btn {
+                width: 45px;
+                height: 45px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Patient Dashboard -->
+    <div class="container dashboard" id="patientDashboard">
+        <div class="dashboard-header">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">AAM</div>
+                <div class="user-info">
+                     <h2>IMAM MALIK CLINIC</h2>
+                    <h3 id="userName">Abubakar Ahmad Muhammad</h3>
+                    <p id="userDetails">Patient ID: MSS/IM/0034 | Last Login: Today, 10:30 AM</p>
+                </div>
+            </div>
+            <button class="logout-btn" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Appointment Card -->
+            <div class="dashboard-card appointment-card">
+                <div class="card-header">
+                    <h3>Upcoming Appointments</h3>
+                    <i class="fas fa-calendar-check"></i>
+                </div>
+                <ul class="appointment-list">
+                    <li>
+                        <div>
+                            <span class="appointment-date">June 15, 2023 - 10:00 AM</span>
+                            <span>Dr. Aisha Bala</span>
+                        </div>
+                        <span class="appointment-status status-confirmed">Confirmed</span>
+                    </li>
+                    <li>
+                        <div>
+                            <span class="appointment-date">July 2, 2023 - 2:30 PM</span>
+                            <span>Dr. Ibrahim Lawal</span>
+                        </div>
+                        <span class="appointment-status status-pending">Pending</span>
+                    </li>
+                </ul>
+                <div class="view-all">
+                    <a href="#" id="viewAllAppointments">View all appointments <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Medical Records Card -->
+            <div class="dashboard-card medical-card">
+                <div class="card-header">
+                    <h3>Medical Records</h3>
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <div class="medical-info">
+                    <h4>Blood Type</h4>
+                    <p>O+</p>
+                </div>
+                <div class="medical-info">
+                    <h4>Allergies</h4>
+                    <p>Penicillin, Peanuts</p>
+                </div>
+                <div class="medical-info">
+                    <h4>Chronic Conditions</h4>
+                    <p>Hypertension (Diagnosed 2018)</p>
+                </div>
+                <div class="view-all">
+                    <a href="#" id="viewMedicalHistory">View complete medical history <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Lab Results Card -->
+            <div class="dashboard-card lab-card">
+                <div class="card-header">
+                    <h3>Lab Results</h3>
+                    <i class="fas fa-vial"></i>
+                </div>
+                <div class="medical-info">
+                    <h4>Recent Tests</h4>
+                    <p>Complete Blood Count (June 1, 2023)</p>
+                    <p>Lipid Panel (May 15, 2023)</p>
+                </div>
+                <div class="vital-stats">
+                    <div class="stat-item">
+                        <div class="stat-value">120/80</div>
+                        <div class="stat-label">Blood Pressure</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">72</div>
+                        <div class="stat-label">Pulse (bpm)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">98.6°F</div>
+                        <div class="stat-label">Temperature</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value">5.4</div>
+                        <div class="stat-label">Glucose (mmol/L)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Prescriptions Card -->
+            <div class="dashboard-card prescription-card">
+                <div class="card-header">
+                    <h3>Current Prescriptions</h3>
+                    <i class="fas fa-prescription-bottle-alt"></i>
+                </div>
+                <ul class="prescription-list">
+                    <li>
+                        <div>
+                            <strong>Lisinopril</strong>
+                            <p>10mg daily for hypertension</p>
+                        </div>
+                        <span>Refill: 7/10/2023</span>
+                    </li>
+                    <li>
+                        <div>
+                            <strong>Atorvastatin</strong>
+                            <p>20mg at bedtime for cholesterol</p>
+                        </div>
+                        <span>Refill: 8/15/2023</span>
+                    </li>
+                </ul>
+                <div class="view-all">
+                    <a href="#" id="viewAllPrescriptions">View all prescriptions <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Medication Reminders Card -->
+            <div class="dashboard-card reminders-card">
+                <div class="card-header">
+                    <h3>Medication Reminders</h3>
+                    <i class="fas fa-bell"></i>
+                </div>
+                <ul class="reminder-list">
+                    <li class="reminder-item">
+                        <div class="reminder-time">08:00 AM</div>
+                        <div class="reminder-details">
+                            <h4>Lisinopril</h4>
+                            <p>10mg tablet (1 pill)</p>
+                        </div>
+                        <div class="reminder-actions">
+                            <button class="reminder-btn" title="Snooze"><i class="fas fa-clock"></i></button>
+                            <button class="reminder-btn" title="Mark as taken"><i class="fas fa-check"></i></button>
+                        </div>
+                    </li>
+                    <li class="reminder-item">
+                        <div class="reminder-time">09:00 PM</div>
+                        <div class="reminder-details">
+                            <h4>Atorvastatin</h4>
+                            <p>20mg tablet (1 pill)</p>
+                        </div>
+                        <div class="reminder-actions">
+                            <button class="reminder-btn" title="Snooze"><i class="fas fa-clock"></i></button>
+                            <button class="reminder-btn" title="Mark as taken"><i class="fas fa-check"></i></button>
+                        </div>
+                    </li>
+                </ul>
+                <div class="add-reminder-form">
+                    <button class="btn btn-primary" id="addReminderBtn" style="width: 100%;">
+                        <i class="fas fa-plus"></i> Add New Reminder
+                    </button>
+                </div>
+            </div>
+
+            <!-- Billing Card -->
+            <div class="dashboard-card billing-card">
+                <div class="card-header">
+                    <h3>Billing</h3>
+                    <i class="fas fa-file-invoice-dollar"></i>
+                </div>
+                <ul class="billing-list">
+                    <li>
+                        <div class="billing-item">
+                            <div class="billing-description">
+                                <h4>Consultation Fee</h4>
+                                <p>June 1, 2023</p>
+                            </div>
+                            <div class="billing-amount">₦15,000</div>
+                            <div class="billing-status status-confirmed">Paid</div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="billing-item">
+                            <div class="billing-description">
+                                <h4>Lab Tests</h4>
+                                <p>May 15, 2023</p>
+                            </div>
+                            <div class="billing-amount">₦25,500</div>
+                            <div class="billing-status status-overdue">Pending</div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="view-all">
+                    <a href="#" id="viewAllBills">View all bills <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Messages Card -->
+            <div class="dashboard-card messages-card">
+                <div class="card-header">
+                    <h3>Messages</h3>
+                    <i class="fas fa-comment-medical"></i>
+                </div>
+                <ul class="message-list">
+                    <li>
+                        <div class="message-item">
+                            <div class="message-avatar">AB</div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <span class="message-sender">Dr. Aisha Bala</span>
+                                    <span class="message-date">2 hours ago</span>
+                                </div>
+                                <p class="message-preview">Your test results are ready. Please check your lab results section...</p>
+                            </div>
+                        </div>
+                    </li>
+                    <li>
+                        <div class="message-item">
+                            <div class="message-avatar">IM</div>
+                            <div class="message-content">
+                                <div class="message-header">
+                                    <span class="message-sender">Imam Malik Clinic</span>
+                                    <span class="message-date">1 day ago</span>
+                                </div>
+                                <p class="message-preview">Reminder: Your appointment with Dr. Ibrahim is tomorrow at 2:30 PM...</p>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+                <div class="view-all">
+                    <a href="#" id="viewAllMessages">View all messages <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </div>
+
+            <!-- Telemedicine Card -->
+            <div class="dashboard-card telemedicine-card full-width-card">
+                <div class="card-header">
+                    <h3>Telemedicine</h3>
+                    <i class="fas fa-video"></i>
+                </div>
+                <div class="telemedicine-container">
+                    <div>
+                        <div class="video-container remote-video" id="remoteVideoContainer">
+                            <video id="remoteVideo" autoplay></video>
+                            <div class="local-video" id="localVideoContainer">
+                                <video id="localVideo" autoplay muted></video>
+                            </div>
+                        </div>
+                        <div class="video-controls">
+                            <button class="video-control-btn" id="toggleMicBtn" title="Mute">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            <button class="video-control-btn" id="toggleVideoBtn" title="Turn off camera">
+                                <i class="fas fa-video"></i>
+                            </button>
+                            <button class="video-control-btn end-call" id="endCallBtn" title="End call">
+                                <i class="fas fa-phone-slash"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="telemedicine-chat">
+                        <div class="chat-header">
+                            <i class="fas fa-user-md"></i> Chat with Dr. Aisha Bala
+                        </div>
+                        <div class="chat-messages" id="chatMessages">
+                            <div class="message received">
+                                <p>Hello John, how are you feeling today?</p>
+                                <span class="message-time">10:05 AM</span>
+                            </div>
+                            <div class="message sent">
+                                <p>I'm doing better, but still have some headaches</p>
+                                <span class="message-time">10:06 AM</span>
+                            </div>
+                            <div class="message received">
+                                <p>I see. Have you been taking your medication regularly?</p>
+                                <span class="message-time">10:07 AM</span>
+                            </div>
+                        </div>
+                        <div class="chat-input">
+                            <input type="text" id="chatInput" placeholder="Type your message...">
+                            <button id="sendMessageBtn"><i class="fas fa-paper-plane">Edit</i></button>
+                        </div>
+                    </div>
+                </div>
+                <div class="view-all" style="margin-top: 20px;">
+                    <button class="btn btn-primary" id="startConsultationBtn" style="width: 100%;">
+                        <i class="fas fa-video"></i> Start New Consultation
+                    </button>
+                </div>
+            </div>
+
+            <!-- Quick Actions Card -->
+            <div class="dashboard-card full-width-card">
+                <div class="card-header">
+                    <h3>Quick Actions</h3>
+                    <i class="fas fa-bolt"></i>
+                </div>
+                <div class="quick-actions" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; padding: 15px 0;">
+                    <button class="btn btn-secondary" id="quickBookAppointment"><i class="fas fa-calendar-plus"></i> Book Appointment</button>
+                    <button class="btn btn-secondary" id="quickDownloadRecords"><i class="fas fa-file-download"></i> Download Records</button>
+                    <button class="btn btn-secondary" id="quickMessageDoctor"><i class="fas fa-comment-medical"></i> Message Doctor</button>
+                    <button class="btn btn-secondary" id="quickRequestRefill"><i class="fas fa-pills"></i> Request Refill</button>
+                    <button class="btn btn-secondary" id="quickPayBill"><i class="fas fa-file-invoice-dollar"></i> Pay Bill</button>
+                    <button class="btn btn-secondary" id="quickRequestRecords"><i class="fas fa-notes-medical"></i> Request Records</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Appointment Booking Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeAppointmentModal">&times;</span>
+            <h2 class="modal-title">Book New Appointment</h2>
+            <form id="appointmentForm">
+                <div class="form-group">
+                    <label for="appointmentDepartment">Department</label>
+                    <select id="appointmentDepartment" required>
+                        <option value="">Select Department</option>
+                        <option value="general">General Medicine</option>
+                        <option value="cardiology">Cardiology</option>
+                        <option value="pediatrics">Pediatrics</option>
+                        <option value="gynecology">Gynecology</option>
+                        <option value="neurology">Neurology</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointmentDoctor">Preferred Doctor</label>
+                    <select id="appointmentDoctor" required>
+                        <option value="">Select Doctor</option>
+                        <option value="dr_aisha">Dr. Aisha Bala Mohammed</option>
+                        <option value="dr_ibrahim">Dr. Ibrahim Musa Lawal</option>
+                        <option value="dr_fatima">Dr. Fatima Yusuf</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="appointmentDate">Date</label>
+                        <input type="date" id="appointmentDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="appointmentTime">Time</label>
+                        <input type="time" id="appointmentTime" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="appointmentReason">Reason for Visit</label>
+                    <textarea id="appointmentReason" rows="4" required></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-calendar-check"></i> Book Appointment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Download Records Modal -->
+    <div id="downloadModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeDownloadModal">&times;</span>
+            <h2 class="modal-title">Download Medical Records</h2>
+            <form id="downloadForm">
+                <div class="form-group">
+                    <label for="recordType">Record Type</label>
+                    <select id="recordType" required>
+                        <option value="">Select record type</option>
+                        <option value="full">Full Medical History</option>
+                        <option value="lab">Lab Results Only</option>
+                        <option value="prescriptions">Prescriptions Only</option>
+                        <option value="vaccinations">Vaccination Records</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dateRange">Date Range</label>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <input type="date" id="startDate" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="date" id="endDate" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="format">Download Format</label>
+                    <select id="format" required>
+                        <option value="pdf">PDF</option>
+                        <option value="csv">CSV (Excel)</option>
+                        <option value="json">JSON</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-download"></i> Download Records
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Message Doctor Modal -->
+    <div id="messageModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeMessageModal">&times;</span>
+            <h2 class="modal-title">Message Your Doctor</h2>
+            <form id="messageForm">
+                <div class="form-group">
+                    <label for="messageDoctor">Select Doctor</label>
+                    <select id="messageDoctor" required>
+                        <option value="">Select Doctor</option>
+                        <option value="dr_aisha">Dr. Aisha Bala Mohammed</option>
+                        <option value="dr_ibrahim">Dr. Ibrahim Musa Lawal</option>
+                        <option value="dr_fatima">Dr. Fatima Yusuf</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="messageSubject">Subject</label>
+                    <input type="text" id="messageSubject" placeholder="Enter message subject" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="messageContent">Message</label>
+                    <textarea id="messageContent" rows="6" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="urgentCheckbox"> Mark as Urgent
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Send Message
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Request Refill Modal -->
+    <div id="refillModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeRefillModal">&times;</span>
+            <h2 class="modal-title">Request Prescription Refill</h2>
+            <form id="refillForm">
+                <div class="form-group">
+                    <label for="refillMedication">Select Medication</label>
+                    <select id="refillMedication" required>
+                        <option value="">Select medication</option>
+                        <option value="lisinopril">Lisinopril 10mg</option>
+                        <option value="atorvastatin">Atorvastatin 20mg</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="refillPharmacy">Preferred Pharmacy</label>
+                    <select id="refillPharmacy" required>
+                        <option value="">Select pharmacy</option>
+                        <option value="imc">Imam Malik Clinic Pharmacy</option>
+                        <option value="healthplus">HealthPlus Pharmacy, Wuse</option>
+                        <option value="medplus">MedPlus Pharmacy, Maitama</option>
+                        <option value="other">Other (specify below)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="otherPharmacyGroup" style="display: none;">
+                    <label for="otherPharmacy">Pharmacy Name & Address</label>
+                    <input type="text" id="otherPharmacy" placeholder="Enter pharmacy details">
+                </div>
+                
+                <div class="form-group">
+                    <label for="refillNotes">Additional Notes</label>
+                    <textarea id="refillNotes" rows="3"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Submit Refill Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Pay Bill Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closePaymentModal">&times;</span>
+            <h2 class="modal-title">Pay Your Bill</h2>
+            <form id="paymentForm">
+                <div class="form-group">
+                    <label>Outstanding Balance</label>
+                    <div style="font-size: 1.8rem; font-weight: bold; color: var(--accent); text-align: center; margin: 15px 0;">
+                        ₦25,500.00
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentAmount">Payment Amount (₦)</label>
+                    <input type="number" id="paymentAmount" value="25500" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="paymentMethod">Payment Method</label>
+                    <select id="paymentMethod" required>
+                        <option value="">Select payment method</option>
+                        <option value="card">Credit/Debit Card</option>
+                        <option value="transfer">Bank Transfer</option>
+                        <option value="ussd">USSD</option>
+                        <option value="wallet">Mobile Wallet</option>
+                    </select>
+                </div>
+                
+                <div id="cardDetails" style="display: none;">
+                    <div class="form-group">
+                        <label for="cardNumber">Card Number</label>
+                        <input type="text" id="cardNumber" placeholder="1234 5678 9012 3456">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="expiryDate">Expiry Date</label>
+                            <input type="text" id="expiryDate" placeholder="MM/YY">
+                        </div>
+                        <div class="form-group">
+                            <label for="cvv">CVV</label>
+                            <input type="text" id="cvv" placeholder="123">
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" required> I authorize Imam Malik Clinic to charge my payment method
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-credit-card"></i> Make Payment
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Request Records Modal -->
+    <div id="recordsModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeRecordsModal">&times;</span>
+            <h2 class="modal-title">Request Medical Records</h2>
+            <form id="recordsForm">
+                <div class="form-group">
+                    <label for="recordsType">Records Type</label>
+                    <select id="recordsType" required>
+                        <option value="">Select records type</option>
+                        <option value="full">Full Medical Records</option>
+                        <option value="specific">Specific Records</option>
+                        <option value="lab">Lab Results Only</option>
+                        <option value="imaging">Imaging Reports</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="specificRecordsGroup" style="display: none;">
+                    <label>Select Specific Records</label>
+                    <div style="margin-top: 10px;">
+                        <label style="display: block; margin-bottom: 10px;">
+                            <input type="checkbox" name="specificRecords" value="consultations"> Consultation Notes
+                        </label>
+                        <label style="display: block; margin-bottom: 10px;">
+                            <input type="checkbox" name="specificRecords" value="prescriptions"> Prescription History
+                        </label>
+                        <label style="display: block; margin-bottom: 10px;">
+                            <input type="checkbox" name="specificRecords" value="allergies"> Allergies & Reactions
+                        </label>
+                        <label style="display: block; margin-bottom: 10px;">
+                            <input type="checkbox" name="specificRecords" value="immunizations"> Immunization Records
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="recordsPurpose">Purpose of Request</label>
+                    <select id="recordsPurpose" required>
+                        <option value="">Select purpose</option>
+                        <option value="personal">Personal Records</option>
+                        <option value="second_opinion">Second Opinion</option>
+                        <option value="new_doctor">New Healthcare Provider</option>
+                        <option value="insurance">Insurance Claim</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="recordsDelivery">Delivery Method</label>
+                    <select id="recordsDelivery" required>
+                        <option value="">Select delivery method</option>
+                        <option value="portal">Patient Portal Download</option>
+                        <option value="email">Secure Email</option>
+                        <option value="pickup">Pick Up at Clinic</option>
+                        <option value="mail">Mail to Address</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" required> I certify that this information is accurate
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-paper-plane"></i> Submit Request
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Reminder Modal -->
+    <div id="reminderModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeReminderModal">&times;</span>
+            <h2 class="modal-title">Add Medication Reminder</h2>
+            <form id="reminderForm">
+                <div class="form-group">
+                    <label for="reminderMedication">Medication</label>
+                    <select id="reminderMedication" required>
+                        <option value="">Select medication</option>
+                        <option value="lisinopril">Lisinopril 10mg</option>
+                        <option value="atorvastatin">Atorvastatin 20mg</option>
+                        <option value="other">Other (specify below)</option>
+                    </select>
+                </div>
+                
+                <div class="form-group" id="otherMedicationGroup" style="display: none;">
+                    <label for="otherMedication">Medication Name & Dosage</label>
+                    <input type="text" id="otherMedication" placeholder="e.g., Amoxicillin 500mg">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="reminderTime">Time</label>
+                        <input type="time" id="reminderTime" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="reminderFrequency">Frequency</label>
+                        <select id="reminderFrequency" required>
+                            <option value="daily">Daily</option>
+                            <option value="weekly">Weekly</option>
+                            <option value="monthly">Monthly</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group" id="customFrequencyGroup" style="display: none;">
+                    <label for="customFrequency">Custom Frequency</label>
+                    <input type="text" id="customFrequency" placeholder="e.g., Every 3 days">
+                </div>
+                
+                <div class="form-group">
+                    <label for="reminderNotes">Notes</label>
+                    <textarea id="reminderNotes" rows="3" placeholder="Any special instructions"></textarea>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-plus"></i> Add Reminder
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Telemedicine Start Modal -->
+    <div id="telemedicineModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" id="closeTelemedicineModal">&times;</span>
+            <h2 class="modal-title">Start Telemedicine Consultation</h2>
+            <form id="telemedicineForm">
+                <div class="form-group">
+                    <label for="consultationDoctor">Consult With</label>
+                    <select id="consultationDoctor" required>
+                        <option value="">Select Doctor</option>
+                        <option value="dr_aisha">Dr. Aisha Bala Mohammed</option>
+                        <option value="dr_ibrahim">Dr. Ibrahim Musa Lawal</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="consultationReason">Reason for Consultation</label>
+                    <textarea id="consultationReason" rows="4" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" required> I agree to the <a href="#" style="color: var(--primary);">Telemedicine Terms</a>
+                    </label>
+                </div>
+                
+                <div class="form-group">
+                    <label>Connection Test</label>
+                    <div style="display: flex; gap: 15px; margin-top: 10px;">
+                        <div style="flex: 1; text-align: center; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+                            <i class="fas fa-microphone" style="font-size: 1.5rem; color: var(--success); margin-bottom: 10px;"></i>
+                            <div>Microphone: <span id="micStatus">Good</span></div>
+                        </div>
+                        <div style="flex: 1; text-align: center; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+                            <i class="fas fa-video" style="font-size: 1.5rem; color: var(--success); margin-bottom: 10px;"></i>
+                            <div>Camera: <span id="cameraStatus">Good</span></div>
+                        </div>
+                        <div style="flex: 1; text-align: center; padding: 15px; background: #f5f5f5; border-radius: 8px;">
+                            <i class="fas fa-network-wired" style="font-size: 1.5rem; color: var(--success); margin-bottom: 10px;"></i>
+                            <div>Connection: <span id="connectionStatus">Good</span></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-video"></i> Start Consultation
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // ===== MODAL MANAGEMENT =====
+            const modals = {
+                appointment: document.getElementById('appointmentModal'),
+                download: document.getElementById('downloadModal'),
+                message: document.getElementById('messageModal'),
+                refill: document.getElementById('refillModal'),
+                payment: document.getElementById('paymentModal'),
+                records: document.getElementById('recordsModal'),
+                reminder: document.getElementById('reminderModal'),
+                telemedicine: document.getElementById('telemedicineModal')
+            };
+            
+            const openButtons = {
+                appointment: [
+                    document.getElementById('quickBookAppointment'),
+                    document.getElementById('bookAppointmentBtn')
+                ],
+                download: document.getElementById('quickDownloadRecords'),
+                message: document.getElementById('quickMessageDoctor'),
+                refill: document.getElementById('quickRequestRefill'),
+                payment: document.getElementById('quickPayBill'),
+                records: document.getElementById('quickRequestRecords'),
+                reminder: document.getElementById('addReminderBtn'),
+                telemedicine: document.getElementById('startConsultationBtn')
+            };
+            
+            const closeButtons = {
+                appointment: document.getElementById('closeAppointmentModal'),
+                download: document.getElementById('closeDownloadModal'),
+                message: document.getElementById('closeMessageModal'),
+                refill: document.getElementById('closeRefillModal'),
+                payment: document.getElementById('closePaymentModal'),
+                records: document.getElementById('closeRecordsModal'),
+                reminder: document.getElementById('closeReminderModal'),
+                telemedicine: document.getElementById('closeTelemedicineModal')
+            };
+            
+            // Open modals
+            Object.entries(openButtons).forEach(([modalName, buttons]) => {
+                if (Array.isArray(buttons)) {
+                    buttons.forEach(button => {
+                        if (button) button.addEventListener('click', () => openModal(modalName));
+                    });
+                } else if (buttons) {
+                    buttons.addEventListener('click', () => openModal(modalName));
+                }
+            });
+            
+            // Close modals
+            Object.entries(closeButtons).forEach(([modalName, button]) => {
+                if (button) button.addEventListener('click', () => closeModal(modalName));
+            });
+            
+            // Close when clicking outside
+            window.addEventListener('click', (e) => {
+                Object.entries(modals).forEach(([modalName, modal]) => {
+                    if (e.target === modal) {
+                        closeModal(modalName);
+                    }
+                });
+            });
+            
+            function openModal(modalName) {
+                modals[modalName].style.display = 'block';
+                document.body.style.overflow = 'hidden';
+            }
+            
+            function closeModal(modalName) {
+                modals[modalName].style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+            
+            // ===== FORM HANDLING =====
+            document.getElementById('appointmentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Your appointment has been booked successfully!');
+                closeModal('appointment');
+            });
+            
+            document.getElementById('downloadForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Your records download has started. Check your downloads folder.');
+                closeModal('download');
+            });
+            
+            document.getElementById('messageForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Your message has been sent to the doctor.');
+                closeModal('message');
+            });
+            
+            document.getElementById('refillForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Your refill request has been submitted. You will be notified when ready.');
+                closeModal('refill');
+            });
+            
+            document.getElementById('paymentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Payment processed successfully! Thank you.');
+                closeModal('payment');
+            });
+            
+            document.getElementById('recordsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Your records request has been submitted. You will be notified when ready.');
+                closeModal('records');
+            });
+            
+            document.getElementById('reminderForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('New medication reminder added!');
+                closeModal('reminder');
+            });
+            
+            document.getElementById('telemedicineForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                closeModal('telemedicine');
+                // In a real app, this would connect to the video consultation
+                alert('Connecting to doctor...');
+            });
+            
+            // ===== TELEMEDICINE CONTROLS =====
+            const toggleMicBtn = document.getElementById('toggleMicBtn');
+            const toggleVideoBtn = document.getElementById('toggleVideoBtn');
+            const endCallBtn = document.getElementById('endCallBtn');
+            const localVideo = document.getElementById('localVideo');
+            const remoteVideo = document.getElementById('remoteVideo');
+            const chatInput = document.getElementById('chatInput');
+            const sendMessageBtn = document.getElementById('sendMessageBtn');
+            const chatMessages = document.getElementById('chatMessages');
+            
+            let isMicOn = true;
+            let isVideoOn = true;
+            
+            // Toggle microphone
+            toggleMicBtn.addEventListener('click', function() {
+                isMicOn = !isMicOn;
+                if (localVideo.srcObject) {
+                    localVideo.srcObject.getAudioTracks().forEach(track => {
+                        track.enabled = isMicOn;
+                    });
+                }
+                this.classList.toggle('active', !isMicOn);
+                this.innerHTML = isMicOn ? '<i class="fas fa-microphone"></i>' : '<i class="fas fa-microphone-slash"></i>';
+                this.title = isMicOn ? 'Mute' : 'Unmute';
+            });
+            
+            // Toggle video
+            toggleVideoBtn.addEventListener('click', function() {
+                isVideoOn = !isVideoOn;
+                if (localVideo.srcObject) {
+                    localVideo.srcObject.getVideoTracks().forEach(track => {
+                        track.enabled = isVideoOn;
+                    });
+                }
+                this.classList.toggle('active', !isVideoOn);
+                this.innerHTML = isVideoOn ? '<i class="fas fa-video"></i>' : '<i class="fas fa-video-slash"></i>';
+                this.title = isVideoOn ? 'Turn off camera' : 'Turn on camera';
+                document.getElementById('localVideoContainer').style.display = isVideoOn ? 'block' : 'none';
+            });
+            
+            // End call
+            endCallBtn.addEventListener('click', function() {
+                if (confirm('Are you sure you want to end the consultation?')) {
+                    if (localVideo.srcObject) {
+                        localVideo.srcObject.getTracks().forEach(track => track.stop());
+                    }
+                    document.getElementById('remoteVideoContainer').innerHTML = '<video id="remoteVideo" autoplay></video>';
+                    remoteVideo.srcObject = null;
+                    alert('Consultation ended. Thank you!');
+                }
+            });
+            
+            // Chat functionality
+            function sendMessage() {
+                const message = chatInput.value.trim();
+                if (message) {
+                    const now = new Date();
+                    const timeString = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    
+                    const messageElement = document.createElement('div');
+                    messageElement.className = 'message sent';
+                    messageElement.innerHTML = `
+                        <p>${message}</p>
+                        <span class="message-time">${timeString}</span>
+                    `;
+                    
+                    chatMessages.appendChild(messageElement);
+                    chatInput.value = '';
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                    
+                    // Simulate doctor reply after 1-3 seconds
+                    setTimeout(() => {
+                        const replies = [
+                            "I understand. Let me check your records.",
+                            "That's helpful information. How long has this been going on?",
+                            "I recommend we schedule a follow-up appointment.",
+                            "Have you taken any medication for this?",
+                            "That's a common symptom. Let me suggest some options."
+                        ];
+                        const reply = replies[Math.floor(Math.random() * replies.length)];
+                        
+                        const replyElement = document.createElement('div');
+                        replyElement.className = 'message received';
+                        replyElement.innerHTML = `
+                            <p>${reply}</p>
+                            <span class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                        `;
+                        
+                        chatMessages.appendChild(replyElement);
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }, 1000 + Math.random() * 2000);
+                }
+            }
+            
+            sendMessageBtn.addEventListener('click', sendMessage);
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+            
+            // ===== DYNAMIC FORM ELEMENTS =====
+            // Show other pharmacy field when "Other" is selected
+            document.getElementById('refillPharmacy').addEventListener('change', function() {
+                document.getElementById('otherPharmacyGroup').style.display = 
+                    this.value === 'other' ? 'block' : 'none';
+            });
+            
+            // Show other medication field when "Other" is selected
+            document.getElementById('reminderMedication').addEventListener('change', function() {
+                document.getElementById('otherMedicationGroup').style.display = 
+                    this.value === 'other' ? 'block' : 'none';
+            });
+            
+            // Show custom frequency field when "Custom" is selected
+            document.getElementById('reminderFrequency').addEventListener('change', function() {
+                document.getElementById('customFrequencyGroup').style.display = 
+                    this.value === 'custom' ? 'block' : 'none';
+            });
+            
+            // Show specific records when "Specific Records" is selected
+            document.getElementById('recordsType').addEventListener('change', function() {
+                document.getElementById('specificRecordsGroup').style.display = 
+                    this.value === 'specific' ? 'block' : 'none';
+            });
+            
+            // Show card details when "Card" is selected
+            document.getElementById('paymentMethod').addEventListener('change', function() {
+                document.getElementById('cardDetails').style.display = 
+                    this.value === 'card' ? 'block' : 'none';
+            });
+            
+            // ===== VIDEO STREAM =====
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                    .then(function(stream) {
+                        localVideo.srcObject = stream;
+                        
+                        // For demo purposes, we'll use the same stream for remote video
+                        // In a real app, this would be the doctor's stream from WebRTC
+                        setTimeout(() => {
+                            remoteVideo.srcObject = stream.clone();
+                        }, 1500);
+                    })
+                    .catch(function(err) {
+                        console.error('Could not access media devices:', err);
+                        document.getElementById('micStatus').textContent = 'Not available';
+                        document.getElementById('cameraStatus').textContent = 'Not available';
+                        document.getElementById('micStatus').parentElement.style.color = 'var(--accent)';
+                        document.getElementById('cameraStatus').parentElement.style.color = 'var(--accent)';
+                    });
+            }
+            
+            // ===== REMINDER ACTIONS =====
+            document.querySelectorAll('.reminder-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const action = this.querySelector('i').className;
+                    const reminderItem = this.closest('.reminder-item');
+                    
+                    if (action.includes('check')) {
+                        reminderItem.style.opacity = '0.5';
+                        setTimeout(() => {
+                            reminderItem.style.display = 'none';
+                        }, 300);
+                        alert('Medication marked as taken. Good job!');
+                    } else if (action.includes('clock')) {
+                        alert('Reminder snoozed for 30 minutes');
+                    }
+                });
+            });
+
+              // Logout functionality
+    document.getElementById("logoutBtn").addEventListener("click", function () {
+        // Clear session or localStorage if used
+        localStorage.removeItem("isLoggedIn");
+        sessionStorage.clear();
+
+        // Redirect to homepage
+        window.location.href = "index.html";
+    });
+            
+            // ===== VIEW ALL LINKS =====
+            document.querySelectorAll('[id^="viewAll"]').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const section = this.id.replace('viewAll', '').toLowerCase();
+                    alert(`View all ${section} would show a full page view in a real application`);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

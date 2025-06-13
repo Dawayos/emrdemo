@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMR Laboratory Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-color: #ecf0f1;
+            --dark-color: #34495e;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f7fa;
+            color: #333;
+        }
+        
+        .dashboard-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1rem;
+            border-radius: 0 0 10px 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card {
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            margin-bottom: 20px;
+            border: none;
+            transition: transform 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card-header {
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 10px 10px 0 0 !important;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-pending {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .status-completed {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .status-critical {
+            background-color: var(--danger-color);
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        
+        .nav-pills .nav-link.active {
+            background-color: var(--primary-color);
+        }
+        
+        .search-box {
+            position: relative;
+        }
+        
+        .search-box i {
+            position: absolute;
+            top: 12px;
+            left: 15px;
+            color: #7f8c8d;
+        }
+        
+        .search-box input {
+            padding-left: 40px;
+            border-radius: 20px;
+            border: 1px solid #ddd;
+        }
+        
+        .patient-info {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .patient-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 3px solid var(--primary-color);
+        }
+        
+        .test-result-row {
+            border-bottom: 1px solid #eee;
+            padding: 10px 0;
+        }
+        
+        .test-result-row:last-child {
+            border-bottom: none;
+        }
+        
+        .progress-thin {
+            height: 5px;
+        }
+        
+        .dark-mode {
+            background-color: #1a1a2e;
+            color: #e6e6e6;
+        }
+        
+        .dark-mode .card {
+            background-color: #16213e;
+            color: #e6e6e6;
+        }
+        
+        .dark-mode .card-header {
+            background-color: #0f3460;
+        }
+        
+        .dark-mode .patient-info {
+            background-color: #16213e;
+            color: #e6e6e6;
+        }
+        
+        .dark-mode .table {
+            color: #e6e6e6;
+        }
+        
+        .dark-mode .form-control {
+            background-color: #0f3460;
+            color: #e6e6e6;
+            border-color: #1a1a2e;
+        }
+        
+        .floating-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            cursor: pointer;
+        }
+        
+        @media (max-width: 768px) {
+            .patient-details {
+                text-align: center;
+            }
+            
+            .patient-photo {
+                margin: 0 auto 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header mb-4">
+            <div class="row align-items-center">
+                <div class="col-md-6">
+                    <h1><i class="fas fa-flask"></i> IMAM MALIK CLINIC Laboratory Dashboard</h1>
+                    <p class="mb-0">Real-time test management and patient monitoring</p>
+                </div>
+                <div class="col-md-6">
+                    <div class="d-flex justify-content-md-end align-items-center">
+                        <div class="search-box me-3">
+                            <i class="fas fa-search"></i>
+                            <input type="text" class="form-control" placeholder="Search patient or test..." id="searchInput">
+                        </div>
+                        <div class="dropdown">
+                            <button class="btn btn-light dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown">
+                                <i class="fas fa-user-circle me-1"></i> Dr. Sarah Smith
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-user me-2"></i>Profile</a></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                                <li><hr class="dropdown-divider"></li>
+                                <li><a class="dropdown-item" href="#"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                            </ul>
+                        </div>
+                        <button class="btn btn-link text-white ms-2" id="darkModeToggle">
+                            <i class="fas fa-moon"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Patient Information -->
+        <div class="row mb-4">
+            <div class="col-lg-4">
+                <div class="patient-info">
+                    <div class="row">
+                        <div class="col-md-4 text-center patient-details">
+                            <img src="https://randomuser.me/api/portraits/men/42.jpg" alt="Patient" class="patient-photo mb-2">
+                            <span class="badge bg-success">Inpatient</span>
+                        </div>
+                        <div class="col-md-8 patient-details">
+                            <h4>John Doe <small class="text-muted">#P-100245</small></h4>
+                            <p class="mb-1"><strong>Age:</strong> 42 years</p>
+                            <p class="mb-1"><strong>Gender:</strong> Male</p>
+                            <p class="mb-1"><strong>Blood Type:</strong> A+</p>
+                            <p class="mb-1"><strong>Attending Physician:</strong> Dr. Sarah Smith</p>
+                            <p class="mb-0"><strong>Last Visit:</strong> 06/12/2025</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-8">
+                <div class="card">
+                    <div class="card-header d-flex justify-content-between align-items-center">
+                        <span><i class="fas fa-chart-line me-2"></i>Test Trends</span>
+                        <div>
+                            <select class="form-select form-select-sm" style="width: auto; display: inline-block;">
+                                <option>Last 7 days</option>
+                                <option selected>Last 30 days</option>
+                                <option>Last 6 months</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="testTrendsChart" height="120"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Content -->
+        <div class="row">
+            <!-- Test Management Column -->
+            <div class="col-lg-8">
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-vial me-2"></i>Test Management
+                        <button class="btn btn-sm btn-light float-end" data-bs-toggle="modal" data-bs-target="#newTestModal">
+                            <i class="fas fa-plus me-1"></i> New Test
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-hover">
+                                <thead>
+                                    <tr>
+                                        <th>Test Name</th>
+                                        <th>Status</th>
+                                        <th>Ordered By</th>
+                                        <th>Date/Time</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>CBC</td>
+                                        <td><span class="status-badge status-completed">Completed</span></td>
+                                        <td>Dr. Smith</td>
+                                        <td>06/12/2025 10:15 AM</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-primary">View</button>
+                                            <button class="btn btn-sm btn-outline-secondary">Print</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Lipid Panel</td>
+                                        <td><span class="status-badge status-pending">Pending</span></td>
+                                        <td>Dr. Lee</td>
+                                        <td>06/13/2025 08:30 AM</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-primary">Enter Results</button>
+                                        </td>
+                                    </tr>
+                                    <tr class="table-danger">
+                                        <td>Glucose</td>
+                                        <td><span class="status-badge status-critical">Critical</span></td>
+                                        <td>Dr. Patel</td>
+                                        <td>06/13/2025 09:45 AM</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-danger">Alert Physician</button>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td>Liver Function</td>
+                                        <td><span class="status-badge status-pending">Processing</span></td>
+                                        <td>Dr. Smith</td>
+                                        <td>06/13/2025 11:20 AM</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-outline-secondary">Track Sample</button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sample Tracking -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-boxes me-2"></i>Sample Tracking
+                        <button class="btn btn-sm btn-light float-end" data-bs-toggle="modal" data-bs-target="#scanBarcodeModal">
+                            <i class="fas fa-barcode me-1"></i> Scan Barcode
+                        </button>
+                    </div>
+                    <div class="card-body">
+                        <h5 class="mb-3">Current Sample: #S-2025-0613-001 (Lipid Panel)</h5>
+                        <div class="progress progress-thin mb-3">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 75%;" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <div class="row text-center">
+                            <div class="col">
+                                <div class="p-2 rounded bg-light">
+                                    <i class="fas fa-check-circle text-success mb-1"></i>
+                                    <p class="mb-0 small">Collected<br>09:00 AM</p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="p-2 rounded bg-light">
+                                    <i class="fas fa-check-circle text-success mb-1"></i>
+                                    <p class="mb-0 small">In Transit<br>09:15 AM</p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="p-2 rounded bg-primary text-white">
+                                    <i class="fas fa-spinner mb-1"></i>
+                                    <p class="mb-0 small">Processing<br>Current</p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="p-2 rounded bg-light">
+                                    <i class="far fa-circle text-muted mb-1"></i>
+                                    <p class="mb-0 small">Analysis<br>Pending</p>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="p-2 rounded bg-light">
+                                    <i class="far fa-circle text-muted mb-1"></i>
+                                    <p class="mb-0 small">Completed<br>Pending</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Result Entry Form -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-edit me-2"></i>Result Entry (Lipid Panel)
+                    </div>
+                    <div class="card-body">
+                        <form id="resultEntryForm">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead>
+                                        <tr>
+                                            <th>Parameter</th>
+                                            <th>Result</th>
+                                            <th>Unit</th>
+                                            <th>Reference Range</th>
+                                            <th>Flag</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Total Cholesterol</td>
+                                            <td>
+                                                <input type="number" class="form-control form-control-sm" value="210">
+                                            </td>
+                                            <td>mg/dL</td>
+                                            <td>&lt; 200</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option>Normal</option>
+                                                    <option selected>High</option>
+                                                    <option>Critical High</option>
+                                                    <option>Low</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>LDL</td>
+                                            <td>
+                                                <input type="number" class="form-control form-control-sm" value="145">
+                                            </td>
+                                            <td>mg/dL</td>
+                                            <td>&lt; 100</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option>Normal</option>
+                                                    <option selected>High</option>
+                                                    <option>Critical High</option>
+                                                    <option>Low</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>HDL</td>
+                                            <td>
+                                                <input type="number" class="form-control form-control-sm" value="42">
+                                            </td>
+                                            <td>mg/dL</td>
+                                            <td>&gt; 40</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option selected>Normal</option>
+                                                    <option>High</option>
+                                                    <option>Critical High</option>
+                                                    <option>Low</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Triglycerides</td>
+                                            <td>
+                                                <input type="number" class="form-control form-control-sm" value="180">
+                                            </td>
+                                            <td>mg/dL</td>
+                                            <td>&lt; 150</td>
+                                            <td>
+                                                <select class="form-select form-select-sm">
+                                                    <option>Normal</option>
+                                                    <option selected>High</option>
+                                                    <option>Critical High</option>
+                                                    <option>Low</option>
+                                                </select>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="mb-3">
+                                <label for="resultNotes" class="form-label">Notes</label>
+                                <textarea class="form-control" id="resultNotes" rows="2"></textarea>
+                            </div>
+                            <div class="d-flex justify-content-between">
+                                <button type="button" class="btn btn-secondary">
+                                    <i class="fas fa-microphone me-1"></i> Voice Input
+                                </button>
+                                <div>
+                                    <button type="button" class="btn btn-light me-2">Save Draft</button>
+                                    <button type="submit" class="btn btn-primary">Submit for Validation</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Sidebar -->
+            <div class="col-lg-4">
+                <!-- Alerts Panel -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-bell me-2"></i>Alerts & Notifications
+                        <span class="badge bg-danger float-end">3 New</span>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <a href="#" class="list-group-item list-group-item-action list-group-item-danger">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Critical Result</strong>
+                                    <small>Just now</small>
+                                </div>
+                                <p class="mb-0 small">Glucose = 450 mg/dL (Severe Hyperglycemia)</p>
+                                <small>Patient: John Doe (P-100245)</small>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between">
+                                    <strong>Delay Alert</strong>
+                                    <small>30 min ago</small>
+                                </div>
+                                <p class="mb-0 small">Lipid Panel processing delayed (Machine Calibration)</p>
+                            </a>
+                            <a href="#" class="list-group-item list-group-item-action">
+                                <div class="d-flex justify-content-between">
+                                    <strong>New Test Request</strong>
+                                    <small>1 hour ago</small>
+                                </div>
+                                <p class="mb-0 small">Dr. Lee ordered HbA1c for Patient #P-100267</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Links -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-link me-2"></i>Quick Links
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <button class="btn btn-outline-primary w-100">
+                                    <i class="fas fa-prescription me-1"></i> Pharmacy
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-outline-info w-100">
+                                    <i class="fas fa-x-ray me-1"></i> Radiology
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-outline-success w-100">
+                                    <i class="fas fa-bacteria me-1"></i> Microbiology
+                                </button>
+                            </div>
+                            <div class="col-6">
+                                <button class="btn btn-outline-warning w-100">
+                                    <i class="fas fa-file-medical me-1"></i> Reports
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Audit Log -->
+                <div class="card mb-4">
+                    <div class="card-header">
+                        <i class="fas fa-history me-2"></i>Audit Trail
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="list-group list-group-flush">
+                            <div class="list-group-item">
+                                <small class="text-muted">06/13/2025 10:30 AM</small>
+                                <p class="mb-0">LabTech_Anna entered Glucose results</p>
+                            </div>
+                            <div class="list-group-item">
+                                <small class="text-muted">06/13/2025 10:35 AM</small>
+                                <p class="mb-0">Supervisor_Mark approved CBC report</p>
+                            </div>
+                            <div class="list-group-item">
+                                <small class="text-muted">06/13/2025 09:15 AM</small>
+                                <p class="mb-0">Dr. Smith ordered Lipid Panel</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-center">
+                        <button class="btn btn-sm btn-outline-secondary">View Full Log</button>
+                    </div>
+                </div>
+
+                <!-- AI Suggestions -->
+                <div class="card">
+                    <div class="card-header">
+                        <i class="fas fa-robot me-2"></i>AI Assistant
+                    </div>
+                    <div class="card-body">
+                        <div class="alert alert-warning">
+                            <strong><i class="fas fa-exclamation-triangle me-1"></i> Abnormal Pattern Detected</strong>
+                            <p class="mb-0 small">Elevated WBC (11.2) with normal CRP. Consider bacterial infection or early inflammatory process.</p>
+                        </div>
+                        <div class="alert alert-info">
+                            <strong><i class="fas fa-lightbulb me-1"></i> Suggestion</strong>
+                            <p class="mb-0 small">Patient's LDL is significantly elevated (145). Recommend statin therapy evaluation.</p>
+                        </div>
+                        <button class="btn btn-sm btn-outline-primary w-100">
+                            <i class="fas fa-comment-medical me-1"></i> Chat with AI
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Action Button -->
+    <div class="floating-btn" data-bs-toggle="modal" data-bs-target="#quickActionModal">
+        <i class="fas fa-plus"></i>
+    </div>
+
+    <!-- Modals -->
+    <!-- New Test Modal -->
+    <div class="modal fade" id="newTestModal" tabindex="-1" aria-labelledby="newTestModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="newTestModalLabel"><i class="fas fa-vial me-2"></i>New Test Request</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="patientSearch" class="form-label">Patient</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="patientSearch" value="John Doe (P-100245)" readonly>
+                                    <button class="btn btn-outline-secondary" type="button">Search</button>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="orderingPhysician" class="form-label">Ordering Physician</label>
+                                <input type="text" class="form-control" id="orderingPhysician" value="Dr. Sarah Smith" readonly>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Priority</label>
+                            <div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="priority" id="priorityRoutine" checked>
+                                    <label class="form-check-label" for="priorityRoutine">Routine</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="priority" id="priorityUrgent">
+                                    <label class="form-check-label" for="priorityUrgent">Urgent</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="priority" id="priorityStat">
+                                    <label class="form-check-label" for="priorityStat">STAT</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="testSelection" class="form-label">Select Tests</label>
+                            <select class="form-select" id="testSelection" multiple size="6">
+                                <option selected>CBC (Complete Blood Count)</option>
+                                <option selected>Lipid Panel</option>
+                                <option>Basic Metabolic Panel</option>
+                                <option>Comprehensive Metabolic Panel</option>
+                                <option>Liver Function Tests</option>
+                                <option>Thyroid Stimulating Hormone</option>
+                                <option>Hemoglobin A1C</option>
+                                <option>Urinalysis</option>
+                                <option>Coagulation Panel</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="clinicalNotes" class="form-label">Clinical Notes</label>
+                            <textarea class="form-control" id="clinicalNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Submit Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Barcode Scan Modal -->
+    <div class="modal fade" id="scanBarcodeModal" tabindex="-1" aria-labelledby="scanBarcodeModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scanBarcodeModalLabel"><i class="fas fa-barcode me-2"></i>Scan Barcode</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div class="border rounded p-4 mb-3" style="background-color: #f8f9fa;">
+                        <i class="fas fa-camera fa-3x mb-3"></i>
+                        <p class="mb-0">Position barcode within the camera view</p>
+                    </div>
+                    <p class="text-muted">Or enter barcode manually:</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" placeholder="Enter barcode number">
+                        <button class="btn btn-outline-secondary" type="button">Search</button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Action Modal -->
+    <div class="modal fade" id="quickActionModal" tabindex="-1" aria-labelledby="quickActionModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="quickActionModalLabel">Quick Actions</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-3">
+                        <div class="col-6">
+                            <button class="btn btn-outline-primary w-100" data-bs-toggle="modal" data-bs-target="#newTestModal">
+                                <i class="fas fa-vial me-1"></i> New Test
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-success w-100">
+                                <i class="fas fa-microscope me-1"></i> Batch Entry
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-info w-100" data-bs-toggle="modal" data-bs-target="#scanBarcodeModal">
+                                <i class="fas fa-barcode me-1"></i> Scan Barcode
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-warning w-100">
+                                <i class="fas fa-print me-1"></i> Print Labels
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-danger w-100">
+                                <i class="fas fa-exclamation-triangle me-1"></i> Critical Alert
+                            </button>
+                        </div>
+                        <div class="col-6">
+                            <button class="btn btn-outline-secondary w-100">
+                                <i class="fas fa-comment-medical me-1"></i> Message MD
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Dark Mode Toggle
+        document.getElementById('darkModeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            const icon = this.querySelector('i');
+            if (document.body.classList.contains('dark-mode')) {
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            } else {
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            }
+        });
+
+        // Initialize Test Trends Chart
+        const ctx = document.getElementById('testTrendsChart').getContext('2d');
+        const testTrendsChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Jun 1', 'Jun 3', 'Jun 5', 'Jun 7', 'Jun 9', 'Jun 11', 'Jun 13'],
+                datasets: [
+                    {
+                        label: 'CBC',
+                        data: [12, 19, 15, 17, 14, 16, 18],
+                        borderColor: '#3498db',
+                        backgroundColor: 'rgba(52, 152, 219, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Lipid Panel',
+                        data: [5, 8, 6, 9, 7, 10, 8],
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    },
+                    {
+                        label: 'Glucose',
+                        data: [3, 5, 4, 6, 5, 7, 9],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.3,
+                        fill: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        title: {
+                            display: true,
+                            text: 'Number of Tests'
+                        }
+                    }
+                }
+            }
+        });
+
+        // Search Functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            // In a real app, this would filter the displayed data
+            console.log('Searching for:', searchTerm);
+        });
+
+        // Form Submission
+        document.getElementById('resultEntryForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Results submitted for validation!');
+            // In a real app, this would send data to the server
+        });
+    </script>
+</body>
+</html>
